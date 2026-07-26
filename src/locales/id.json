@@ -228,6 +228,7 @@
     "store_id": "Toko",
     "manual_note": "Tandai paid hanya setelah transfer bank selesai. Auto-disburse ditunda.",
     "mark_paid": "Tandai paid",
+    "reject": "Tolak",
     "marked_paid": "Withdraw ditandai paid."
   },
   "Storefront": {

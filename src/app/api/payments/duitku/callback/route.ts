@@ -31,7 +31,7 @@ async function parseForm(request: Request): Promise<Record<string, string>> {
 
 /**
  * Duitku payment callback.
- * - Verify merchantCode + HMAC signature (constant-time)
+ * - Verify merchantCode + MD5 signature (constant-time)
  * - Match amount
  * - resultCode 00 → mark paid once + credit wallet
  * - resultCode 01 → mark failed (only from pending)
@@ -70,6 +70,13 @@ export async function POST(request: Request) {
     );
     const signatureValid = safeEqualHex(signature, expected);
 
+    // Reject before any DB write: unauthenticated callers must not be able
+    // to grow payment_events with arbitrary payloads.
+    if (!signatureValid) {
+      logger.warn(`Duitku callback invalid signature ${merchantOrderId}`);
+      return new NextResponse('invalid_signature', { status: 400 });
+    }
+
     const orderRows = await db
       .select()
       .from(orders)
@@ -77,26 +84,18 @@ export async function POST(request: Request) {
       .limit(1);
     const order = orderRows[0];
 
-    if (order) {
-      await db.insert(paymentEvents).values({
-        orderId: order.id,
-        source: 'callback',
-        payload: sanitizeCallbackPayload(body),
-        signatureValid: signatureValid ? 1 : 0,
-      });
-    } else {
-      logger.warn(`Duitku callback unknown order ${merchantOrderId}`);
-    }
-
-    if (!signatureValid) {
-      logger.warn(`Duitku callback invalid signature ${merchantOrderId}`);
-      return new NextResponse('invalid_signature', { status: 400 });
-    }
-
     if (!order) {
       // Acknowledge so Duitku stops retrying unknown ids
+      logger.warn(`Duitku callback unknown order ${merchantOrderId}`);
       return new NextResponse('OK', { status: 200 });
     }
+
+    await db.insert(paymentEvents).values({
+      orderId: order.id,
+      source: 'callback',
+      payload: sanitizeCallbackPayload(body),
+      signatureValid: 1,
+    });
 
     const amountIdr = Number.parseInt(amount, 10);
     if (!Number.isInteger(amountIdr) || amountIdr !== order.totalIdr) {
@@ -107,6 +106,9 @@ export async function POST(request: Request) {
     }
 
     if (resultCode === '00') {
+      // Defense in depth: independently confirm with transactionStatus.
+      // A reachable gateway that says "not paid" blocks the credit; an
+      // unreachable gateway does not (signature already verified).
       try {
         const status = await getTransactionStatus(merchantOrderId);
         await db.insert(paymentEvents).values({
@@ -115,6 +117,12 @@ export async function POST(request: Request) {
           payload: status as unknown as Record<string, unknown>,
           signatureValid: 1,
         });
+        if (status.statusCode && status.statusCode !== '00') {
+          logger.error(
+            `Duitku status check contradicts callback ${merchantOrderId}: statusCode=${status.statusCode}`,
+          );
+          return new NextResponse('status_mismatch', { status: 500 });
+        }
       } catch (error) {
         logger.warn(
           `Duitku status check failed: ${error instanceof Error ? error.message : 'unknown'}`,

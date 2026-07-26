@@ -1,17 +1,21 @@
 import { Buffer } from 'node:buffer';
-import { createHmac, timingSafeEqual } from 'node:crypto';
+import { createHash, timingSafeEqual } from 'node:crypto';
 
 /**
- * HMAC-SHA256 hex digest (lowercase).
- * Duitku signatures use HMAC_SHA256(stringToSign, apiKey) → hex.
+ * Duitku classic v2 API signatures (MD5-based, per gateway contract).
+ * Formulas verified against the official duitkupg/duitku-php SDK (Duitku\Api):
+ * - inquiry:            MD5(merchantCode + merchantOrderId + paymentAmount + apiKey)
+ * - transactionStatus:  MD5(merchantCode + merchantOrderId + apiKey)
+ * - callback:           MD5(merchantCode + amount + merchantOrderId + apiKey)
+ * MD5 here is the gateway's authentication scheme, not our choice of hash.
  */
-export function hmacSha256Hex(data: string, apiKey: string): string {
-  return createHmac('sha256', apiKey).update(data, 'utf8').digest('hex');
+function md5Hex(data: string): string {
+  return createHash('md5').update(data, 'utf8').digest('hex');
 }
 
 /**
  * Inquiry / create transaction signature.
- * Formula: HMAC_SHA256(merchantCode + merchantOrderId + paymentAmount, apiKey)
+ * Formula: MD5(merchantCode + merchantOrderId + paymentAmount + apiKey)
  */
 export function signInquiry(
   merchantCode: string,
@@ -19,27 +23,12 @@ export function signInquiry(
   paymentAmount: number | string,
   apiKey: string,
 ): string {
-  const stringToSign = `${merchantCode}${merchantOrderId}${paymentAmount}`;
-  return hmacSha256Hex(stringToSign, apiKey);
-}
-
-/**
- * Get payment method signature.
- * Formula: HMAC_SHA256(merchantCode + amount + datetime, apiKey)
- */
-export function signPaymentMethod(
-  merchantCode: string,
-  amount: number | string,
-  datetime: string,
-  apiKey: string,
-): string {
-  const stringToSign = `${merchantCode}${amount}${datetime}`;
-  return hmacSha256Hex(stringToSign, apiKey);
+  return md5Hex(`${merchantCode}${merchantOrderId}${paymentAmount}${apiKey}`);
 }
 
 /**
  * Callback verification signature.
- * Formula: HMAC_SHA256(merchantCode + amount + merchantOrderId, apiKey)
+ * Formula: MD5(merchantCode + amount + merchantOrderId + apiKey)
  */
 export function signCallback(
   merchantCode: string,
@@ -47,21 +36,19 @@ export function signCallback(
   merchantOrderId: string,
   apiKey: string,
 ): string {
-  const stringToSign = `${merchantCode}${amount}${merchantOrderId}`;
-  return hmacSha256Hex(stringToSign, apiKey);
+  return md5Hex(`${merchantCode}${amount}${merchantOrderId}${apiKey}`);
 }
 
 /**
  * Transaction status check signature.
- * Formula: HMAC_SHA256(merchantCode + merchantOrderId, apiKey)
+ * Formula: MD5(merchantCode + merchantOrderId + apiKey)
  */
 export function signTransactionStatus(
   merchantCode: string,
   merchantOrderId: string,
   apiKey: string,
 ): string {
-  const stringToSign = `${merchantCode}${merchantOrderId}`;
-  return hmacSha256Hex(stringToSign, apiKey);
+  return md5Hex(`${merchantCode}${merchantOrderId}${apiKey}`);
 }
 
 /**

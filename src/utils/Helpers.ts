@@ -10,10 +10,17 @@ export function cn(...inputs: ClassValue[]) {
 
 /**
  * Resolves the public base URL of the application.
+ * In production this MUST come from NEXT_PUBLIC_APP_URL: falling back to
+ * localhost would silently register broken Duitku callback/return URLs
+ * (payments collected, never credited).
  */
 export const getBaseUrl = () => {
   if (Env.NEXT_PUBLIC_APP_URL) {
     return Env.NEXT_PUBLIC_APP_URL.replace(/\/$/, '');
+  }
+
+  if (Env.NODE_ENV === 'production') {
+    throw new Error('NEXT_PUBLIC_APP_URL is required in production');
   }
 
   return 'http://localhost:3000';

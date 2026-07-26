@@ -1,4 +1,4 @@
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { computeWithdrawFee } from '@/features/wallet/fee';
 import { db } from '@/libs/DB';
 import { Env } from '@/libs/Env';
@@ -8,6 +8,21 @@ import {
   wallets,
   withdrawRequests,
 } from '@/models/Schema';
+
+/**
+ * Ledger invariant — the `available` balance journal:
+ *
+ *   wallets.available_idr = Σ amount_idr over types
+ *     (order_credit, withdraw_hold, withdraw_release, adjust, refund)
+ *
+ * withdraw_payout / withdraw_fee entries document consumption of the
+ * pending* hold at payout time; their amounts never touch `available`
+ * and are excluded from the reconciliation sum above.
+ *
+ * All balance mutations use SQL-level increments (`SET x = x + …`) with
+ * guard predicates, never read-modify-write from JS, so concurrent
+ * credits/withdraws cannot lose updates.
+ */
 
 export type RequestWithdrawParams = {
   storeId: string;
@@ -32,7 +47,7 @@ function assertPositiveIntegerIdr(amountIdr: number, label = 'amountIdr'): void 
   }
 }
 
-/** Get or create the wallet row for a store. */
+/** Get or create the wallet row for a store (race-safe via unique index). */
 export async function ensureWallet(storeId: string) {
   if (!storeId?.trim()) {
     throw new Error('storeId is required');
@@ -48,7 +63,8 @@ export async function ensureWallet(storeId: string) {
     return existing;
   }
 
-  const [created] = await db
+  // Concurrent creation loses to wallets_store_id_uidx — re-select after.
+  await db
     .insert(wallets)
     .values({
       storeId,
@@ -57,13 +73,19 @@ export async function ensureWallet(storeId: string) {
       lifetimeEarnedIdr: 0,
       lifetimeWithdrawnIdr: 0,
     })
-    .returning();
+    .onConflictDoNothing();
 
-  if (!created) {
+  const [wallet] = await db
+    .select()
+    .from(wallets)
+    .where(eq(wallets.storeId, storeId))
+    .limit(1);
+
+  if (!wallet) {
     throw new Error('wallet_create_failed');
   }
 
-  return created;
+  return wallet;
 }
 
 /** Recent ledger entries for a store (newest first). */
@@ -88,6 +110,9 @@ export async function listWithdrawsForStore(storeId: string, limit = 50) {
 
 /**
  * Mark order paid (idempotent) then credit store wallet once.
+ * Accepts late payments: `failed` orders (e.g. expired VA paid after the
+ * failure callback) still transition to paid — Duitku has collected the
+ * money either way, and the seller must be credited.
  */
 export async function markOrderPaidAndCredit(input: {
   orderId: string;
@@ -110,7 +135,7 @@ export async function markOrderPaidAndCredit(input: {
     if (order.totalIdr !== input.amountIdr) {
       throw new Error('amount_mismatch');
     }
-    if (order.status === 'paid') {
+    if (order.status === 'paid' || order.status === 'fulfilled_manual') {
       return { alreadyPaid: true, credited: false };
     }
 
@@ -123,81 +148,106 @@ export async function markOrderPaidAndCredit(input: {
         duitkuReference: input.reference ?? order.duitkuReference,
         paymentMethod: input.paymentMethod ?? order.paymentMethod,
       })
-      .where(and(eq(orders.id, order.id), eq(orders.status, 'pending_payment')))
+      .where(
+        and(
+          eq(orders.id, order.id),
+          inArray(orders.status, ['pending_payment', 'failed', 'expired']),
+        ),
+      )
       .returning({ id: orders.id });
 
     if (!updatedOrders[0]) {
       return { alreadyPaid: true, credited: false };
     }
 
-    const existing = await tx
-      .select({ id: ledgerEntries.id })
-      .from(ledgerEntries)
-      .where(
-        and(
-          eq(ledgerEntries.storeId, order.storeId),
-          eq(ledgerEntries.refType, 'order'),
-          eq(ledgerEntries.refId, order.id),
-          eq(ledgerEntries.type, 'order_credit'),
-        ),
-      )
-      .limit(1);
+    const wallet = await ensureWalletTx(tx, order.storeId);
 
-    if (existing[0]) {
+    // Ledger unique index (store, type, refType, refId) is the hard
+    // idempotency backstop; the conditional order update above already
+    // guarantees a single winner.
+    const [entry] = await tx
+      .insert(ledgerEntries)
+      .values({
+        storeId: order.storeId,
+        type: 'order_credit',
+        amountIdr: order.totalIdr,
+        // Placeholder; fixed below from the atomic RETURNING value.
+        balanceAfterIdr: 0,
+        refType: 'order',
+        refId: order.id,
+        note: `Paid ${order.merchantOrderId}`,
+      })
+      .onConflictDoNothing()
+      .returning({ id: ledgerEntries.id });
+
+    if (!entry) {
+      // Ledger row already exists — order was credited before.
       return { alreadyPaid: false, credited: false };
     }
 
-    let [wallet] = await tx
-      .select()
-      .from(wallets)
-      .where(eq(wallets.storeId, order.storeId))
-      .limit(1);
-
-    if (!wallet) {
-      const [created] = await tx
-        .insert(wallets)
-        .values({
-          storeId: order.storeId,
-          availableIdr: 0,
-          pendingIdr: 0,
-          lifetimeEarnedIdr: 0,
-          lifetimeWithdrawnIdr: 0,
-        })
-        .returning();
-      if (!created) {
-        throw new Error('wallet_create_failed');
-      }
-      wallet = created;
-    }
-
-    const nextAvailable = wallet.availableIdr + order.totalIdr;
-    const nextLifetime = wallet.lifetimeEarnedIdr + order.totalIdr;
-
-    await tx
+    const [updatedWallet] = await tx
       .update(wallets)
       .set({
-        availableIdr: nextAvailable,
-        lifetimeEarnedIdr: nextLifetime,
+        availableIdr: sql`${wallets.availableIdr} + ${order.totalIdr}`,
+        lifetimeEarnedIdr: sql`${wallets.lifetimeEarnedIdr} + ${order.totalIdr}`,
       })
-      .where(eq(wallets.id, wallet.id));
+      .where(eq(wallets.id, wallet.id))
+      .returning({ availableIdr: wallets.availableIdr });
 
-    await tx.insert(ledgerEntries).values({
-      storeId: order.storeId,
-      type: 'order_credit',
-      amountIdr: order.totalIdr,
-      balanceAfterIdr: nextAvailable,
-      refType: 'order',
-      refId: order.id,
-      note: `Paid ${order.merchantOrderId}`,
-    });
+    if (!updatedWallet) {
+      throw new Error('wallet_update_failed');
+    }
+
+    await tx
+      .update(ledgerEntries)
+      .set({ balanceAfterIdr: updatedWallet.availableIdr })
+      .where(eq(ledgerEntries.id, entry.id));
 
     return { alreadyPaid: false, credited: true };
   });
 }
 
+type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
+async function ensureWalletTx(tx: Tx, storeId: string) {
+  const [existing] = await tx
+    .select()
+    .from(wallets)
+    .where(eq(wallets.storeId, storeId))
+    .limit(1);
+
+  if (existing) {
+    return existing;
+  }
+
+  await tx
+    .insert(wallets)
+    .values({
+      storeId,
+      availableIdr: 0,
+      pendingIdr: 0,
+      lifetimeEarnedIdr: 0,
+      lifetimeWithdrawnIdr: 0,
+    })
+    .onConflictDoNothing();
+
+  const [wallet] = await tx
+    .select()
+    .from(wallets)
+    .where(eq(wallets.storeId, storeId))
+    .limit(1);
+
+  if (!wallet) {
+    throw new Error('wallet_create_failed');
+  }
+
+  return wallet;
+}
+
 /**
- * Request a withdraw: holds full amount from available → pending,
- * records fee (platform 5% default), creates withdraw_requests row.
+ * Request a withdraw: holds full gross amount from available → pending,
+ * records the platform fee on the request row, writes one withdraw_hold
+ * ledger entry (−gross). The fee is materialized at payout time.
  */
 export async function requestWithdraw(
   params: RequestWithdrawParams,
@@ -228,34 +278,20 @@ export async function requestWithdraw(
   const { feeIdr, netIdr } = computeWithdrawFee(amountIdr, feeBps);
 
   return db.transaction(async (tx) => {
-    const [wallet] = await tx
-      .select()
-      .from(wallets)
-      .where(eq(wallets.storeId, storeId))
-      .limit(1);
+    const wallet = await ensureWalletTx(tx, storeId);
 
-    if (!wallet) {
-      throw new Error('wallet_not_found');
-    }
-
-    if (wallet.availableIdr < amountIdr) {
-      throw new Error('insufficient_balance');
-    }
-
-    const nextAvailable = wallet.availableIdr - amountIdr;
-    const nextPending = wallet.pendingIdr + amountIdr;
-
-    // Optimistic concurrency: only succeed if available balance still matches.
+    // Atomic hold: succeeds only if available still covers the amount,
+    // regardless of concurrent credits or withdraws.
     const [updated] = await tx
       .update(wallets)
       .set({
-        availableIdr: nextAvailable,
-        pendingIdr: nextPending,
+        availableIdr: sql`${wallets.availableIdr} - ${amountIdr}`,
+        pendingIdr: sql`${wallets.pendingIdr} + ${amountIdr}`,
       })
       .where(
         and(
           eq(wallets.id, wallet.id),
-          eq(wallets.availableIdr, wallet.availableIdr),
+          sql`${wallets.availableIdr} >= ${amountIdr}`,
         ),
       )
       .returning();
@@ -282,29 +318,16 @@ export async function requestWithdraw(
       throw new Error('withdraw_request_insert_failed');
     }
 
-    // Hold full gross amount out of available balance
+    // Hold full gross amount out of available balance.
     await tx.insert(ledgerEntries).values({
       storeId,
       type: 'withdraw_hold',
       amountIdr: -amountIdr,
-      balanceAfterIdr: nextAvailable,
+      balanceAfterIdr: updated.availableIdr,
       refType: 'withdraw',
       refId: request.id,
       note: `Withdraw hold ${request.id}`,
     });
-
-    // Fee snapshot (informational; net is paid later on approval)
-    if (feeIdr > 0) {
-      await tx.insert(ledgerEntries).values({
-        storeId,
-        type: 'withdraw_fee',
-        amountIdr: -feeIdr,
-        balanceAfterIdr: nextAvailable,
-        refType: 'withdraw',
-        refId: request.id,
-        note: `Platform fee ${feeBps} bps on withdraw ${request.id}`,
-      });
-    }
 
     return {
       withdrawRequestId: request.id,
@@ -314,5 +337,159 @@ export async function requestWithdraw(
       availableIdr: updated.availableIdr,
       pendingIdr: updated.pendingIdr,
     };
+  });
+}
+
+/**
+ * Admin: mark a pending withdraw as paid after the manual bank transfer.
+ * Consumes the pending hold (gross), records payout (−net) and platform
+ * fee (−fee) ledger entries against the hold, and adds the net amount to
+ * lifetime withdrawn.
+ */
+export async function markWithdrawPaid(
+  withdrawId: string,
+  adminUserId: string,
+): Promise<void> {
+  await db.transaction(async (tx) => {
+    const [req] = await tx
+      .select()
+      .from(withdrawRequests)
+      .where(eq(withdrawRequests.id, withdrawId))
+      .limit(1);
+
+    if (!req) {
+      throw new Error('not_found');
+    }
+
+    const updated = await tx
+      .update(withdrawRequests)
+      .set({
+        status: 'paid',
+        processedAt: new Date(),
+        adminNote: `Marked paid by ${adminUserId}`,
+      })
+      .where(
+        and(
+          eq(withdrawRequests.id, withdrawId),
+          eq(withdrawRequests.status, 'pending'),
+        ),
+      )
+      .returning({ id: withdrawRequests.id });
+
+    if (!updated[0]) {
+      throw new Error('not_pending');
+    }
+
+    const [wallet] = await tx
+      .update(wallets)
+      .set({
+        pendingIdr: sql`${wallets.pendingIdr} - ${req.amountIdr}`,
+        lifetimeWithdrawnIdr: sql`${wallets.lifetimeWithdrawnIdr} + ${req.netIdr}`,
+      })
+      .where(
+        and(
+          eq(wallets.storeId, req.storeId),
+          sql`${wallets.pendingIdr} >= ${req.amountIdr}`,
+        ),
+      )
+      .returning({ availableIdr: wallets.availableIdr });
+
+    if (!wallet) {
+      // Pending hold missing — refuse to mark paid over inconsistent state.
+      throw new Error('wallet_inconsistent');
+    }
+
+    // Pending-consumption records; available is unchanged by these.
+    await tx.insert(ledgerEntries).values([
+      {
+        storeId: req.storeId,
+        type: 'withdraw_payout' as const,
+        amountIdr: -req.netIdr,
+        balanceAfterIdr: wallet.availableIdr,
+        refType: 'withdraw',
+        refId: req.id,
+        note: `Payout ${req.id} (net)`,
+      },
+      {
+        storeId: req.storeId,
+        type: 'withdraw_fee' as const,
+        amountIdr: -req.feeIdr,
+        balanceAfterIdr: wallet.availableIdr,
+        refType: 'withdraw',
+        refId: req.id,
+        note: `Platform fee on withdraw ${req.id}`,
+      },
+    ]);
+  });
+}
+
+/**
+ * Admin: reject a pending withdraw and release the held gross amount
+ * back to the store's available balance.
+ */
+export async function rejectWithdraw(
+  withdrawId: string,
+  adminUserId: string,
+  note?: string,
+): Promise<void> {
+  await db.transaction(async (tx) => {
+    const [req] = await tx
+      .select()
+      .from(withdrawRequests)
+      .where(eq(withdrawRequests.id, withdrawId))
+      .limit(1);
+
+    if (!req) {
+      throw new Error('not_found');
+    }
+
+    const updated = await tx
+      .update(withdrawRequests)
+      .set({
+        status: 'rejected',
+        processedAt: new Date(),
+        adminNote: note?.trim()
+          ? `Rejected by ${adminUserId}: ${note.trim()}`.slice(0, 500)
+          : `Rejected by ${adminUserId}`,
+      })
+      .where(
+        and(
+          eq(withdrawRequests.id, withdrawId),
+          eq(withdrawRequests.status, 'pending'),
+        ),
+      )
+      .returning({ id: withdrawRequests.id });
+
+    if (!updated[0]) {
+      throw new Error('not_pending');
+    }
+
+    const [wallet] = await tx
+      .update(wallets)
+      .set({
+        availableIdr: sql`${wallets.availableIdr} + ${req.amountIdr}`,
+        pendingIdr: sql`${wallets.pendingIdr} - ${req.amountIdr}`,
+      })
+      .where(
+        and(
+          eq(wallets.storeId, req.storeId),
+          sql`${wallets.pendingIdr} >= ${req.amountIdr}`,
+        ),
+      )
+      .returning({ availableIdr: wallets.availableIdr });
+
+    if (!wallet) {
+      throw new Error('wallet_inconsistent');
+    }
+
+    await tx.insert(ledgerEntries).values({
+      storeId: req.storeId,
+      type: 'withdraw_release',
+      amountIdr: req.amountIdr,
+      balanceAfterIdr: wallet.availableIdr,
+      refType: 'withdraw',
+      refId: req.id,
+      note: `Withdraw ${req.id} rejected — hold released`,
+    });
   });
 }

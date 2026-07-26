@@ -3,6 +3,7 @@
 import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { z } from 'zod';
 import {
   getProductById,
   getProductByStoreAndSlug,
@@ -11,11 +12,24 @@ import { productFormSchema } from '@/features/products/validators';
 import { getStoreByOwnerUserId } from '@/features/stores/queries';
 import { db } from '@/libs/DB';
 import { requireUserId } from '@/libs/hub/auth';
+import { revalidateLocalizedPath } from '@/libs/hub/revalidate';
 import { products } from '@/models/Schema';
+
+const productIdSchema = z.string().uuid();
 
 function formString(formData: FormData, key: string): string {
   const value = formData.get(key);
   return typeof value === 'string' ? value : '';
+}
+
+/** True for Postgres unique-constraint violations (concurrent slug race). */
+function isUniqueViolation(error: unknown): boolean {
+  return (
+    typeof error === 'object'
+    && error !== null
+    && 'code' in error
+    && (error as { code?: string }).code === '23505'
+  );
 }
 
 async function requireOwnedStore() {
@@ -30,9 +44,9 @@ async function requireOwnedStore() {
 function revalidateProductPaths(storeSlug: string, productSlug?: string) {
   revalidatePath('/dashboard/products');
   revalidatePath('/dashboard/store');
-  revalidatePath(`/${storeSlug}`);
+  revalidateLocalizedPath(`/${storeSlug}`);
   if (productSlug) {
-    revalidatePath(`/${storeSlug}/p/${productSlug}`);
+    revalidateLocalizedPath(`/${storeSlug}/p/${productSlug}`);
   }
 }
 
@@ -61,15 +75,22 @@ export async function createProductAction(formData: FormData): Promise<void> {
     redirect('/dashboard/products?error=slug_taken');
   }
 
-  await db.insert(products).values({
-    storeId: store.id,
-    title: data.title,
-    slug: data.slug,
-    description: data.description || null,
-    priceIdr: data.priceIdr,
-    imageUrl: data.imageUrl || null,
-    status: data.status,
-  });
+  try {
+    await db.insert(products).values({
+      storeId: store.id,
+      title: data.title,
+      slug: data.slug,
+      description: data.description || null,
+      priceIdr: data.priceIdr,
+      imageUrl: data.imageUrl || null,
+      status: data.status,
+    });
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      redirect('/dashboard/products?error=slug_taken');
+    }
+    throw error;
+  }
 
   revalidateProductPaths(store.slug, data.slug);
   redirect('/dashboard/products?ok=1');
@@ -77,9 +98,13 @@ export async function createProductAction(formData: FormData): Promise<void> {
 
 export async function updateProductAction(formData: FormData): Promise<void> {
   const store = await requireOwnedStore();
-  const productId
-    = formString(formData, 'productId') || formString(formData, 'id');
-  const existing = await getProductById(productId);
+  const parsedId = productIdSchema.safeParse(
+    formString(formData, 'productId') || formString(formData, 'id'),
+  );
+  if (!parsedId.success) {
+    redirect('/dashboard/products?error=not_found');
+  }
+  const existing = await getProductById(parsedId.data);
   if (!existing || existing.storeId !== store.id) {
     redirect('/dashboard/products?error=not_found');
   }
@@ -109,17 +134,24 @@ export async function updateProductAction(formData: FormData): Promise<void> {
     }
   }
 
-  await db
-    .update(products)
-    .set({
-      title: data.title,
-      slug: data.slug,
-      description: data.description || null,
-      priceIdr: data.priceIdr,
-      imageUrl: data.imageUrl || null,
-      status: data.status,
-    })
-    .where(and(eq(products.id, existing.id), eq(products.storeId, store.id)));
+  try {
+    await db
+      .update(products)
+      .set({
+        title: data.title,
+        slug: data.slug,
+        description: data.description || null,
+        priceIdr: data.priceIdr,
+        imageUrl: data.imageUrl || null,
+        status: data.status,
+      })
+      .where(and(eq(products.id, existing.id), eq(products.storeId, store.id)));
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      redirect('/dashboard/products?error=slug_taken');
+    }
+    throw error;
+  }
 
   revalidateProductPaths(store.slug, data.slug);
   redirect('/dashboard/products?ok=1');
@@ -127,9 +159,13 @@ export async function updateProductAction(formData: FormData): Promise<void> {
 
 export async function archiveProductAction(formData: FormData): Promise<void> {
   const store = await requireOwnedStore();
-  const productId
-    = formString(formData, 'productId') || formString(formData, 'id');
-  const existing = await getProductById(productId);
+  const parsedId = productIdSchema.safeParse(
+    formString(formData, 'productId') || formString(formData, 'id'),
+  );
+  if (!parsedId.success) {
+    redirect('/dashboard/products?error=not_found');
+  }
+  const existing = await getProductById(parsedId.data);
   if (!existing || existing.storeId !== store.id) {
     redirect('/dashboard/products?error=not_found');
   }

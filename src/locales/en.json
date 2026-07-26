@@ -228,6 +228,7 @@
     "store_id": "Store",
     "manual_note": "Mark paid only after you completed the bank transfer. Auto-disburse is deferred.",
     "mark_paid": "Mark paid",
+    "reject": "Reject",
     "marked_paid": "Withdraw marked as paid."
   },
   "Storefront": {

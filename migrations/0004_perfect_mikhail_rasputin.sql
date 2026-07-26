@@ -1,0 +1,1 @@
+ALTER TYPE "public"."ledger_type" ADD VALUE 'withdraw_release' BEFORE 'withdraw_fee';

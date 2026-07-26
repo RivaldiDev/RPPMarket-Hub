@@ -9,8 +9,13 @@ export const Env = createEnv({
     DUITKU_API_KEY: z.string().optional().default(''),
     DUITKU_BASE_URL: z.string().url().default('https://sandbox.duitku.com'),
     DUITKU_DEFAULT_PAYMENT_METHOD: z.string().optional().default('SP'),
-    PLATFORM_WITHDRAW_FEE_BPS: z.coerce.number().int().default(500),
-    PLATFORM_MIN_WITHDRAW_IDR: z.coerce.number().int().default(50_000),
+    PLATFORM_WITHDRAW_FEE_BPS: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(10_000)
+      .default(500),
+    PLATFORM_MIN_WITHDRAW_IDR: z.coerce.number().int().min(1).default(50_000),
     PLATFORM_ADMIN_USER_IDS: z.string().optional().default(''),
     /**
      * Explicitly allow mock payments outside normal non-prod default.
@@ -19,7 +24,7 @@ export const Env = createEnv({
     ALLOW_MOCK_PAYMENTS: z.enum(['true', 'false']).optional().default('false'),
   },
   client: {
-    NEXT_PUBLIC_APP_URL: z.string().optional(),
+    NEXT_PUBLIC_APP_URL: z.string().url().optional(),
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
     NEXT_PUBLIC_LOGGING_LEVEL: z
       .enum(['error', 'info', 'debug', 'warning', 'trace', 'fatal'])

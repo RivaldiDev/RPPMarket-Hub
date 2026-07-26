@@ -1,0 +1,24 @@
+ALTER TABLE "ledger_entries" ALTER COLUMN "amount_idr" SET DATA TYPE bigint;--> statement-breakpoint
+ALTER TABLE "ledger_entries" ALTER COLUMN "balance_after_idr" SET DATA TYPE bigint;--> statement-breakpoint
+ALTER TABLE "orders" ALTER COLUMN "unit_price_idr" SET DATA TYPE bigint;--> statement-breakpoint
+ALTER TABLE "orders" ALTER COLUMN "total_idr" SET DATA TYPE bigint;--> statement-breakpoint
+ALTER TABLE "products" ALTER COLUMN "price_idr" SET DATA TYPE bigint;--> statement-breakpoint
+ALTER TABLE "wallets" ALTER COLUMN "available_idr" SET DATA TYPE bigint;--> statement-breakpoint
+ALTER TABLE "wallets" ALTER COLUMN "pending_idr" SET DATA TYPE bigint;--> statement-breakpoint
+ALTER TABLE "wallets" ALTER COLUMN "lifetime_earned_idr" SET DATA TYPE bigint;--> statement-breakpoint
+ALTER TABLE "wallets" ALTER COLUMN "lifetime_withdrawn_idr" SET DATA TYPE bigint;--> statement-breakpoint
+ALTER TABLE "withdraw_requests" ALTER COLUMN "amount_idr" SET DATA TYPE bigint;--> statement-breakpoint
+ALTER TABLE "withdraw_requests" ALTER COLUMN "fee_idr" SET DATA TYPE bigint;--> statement-breakpoint
+ALTER TABLE "withdraw_requests" ALTER COLUMN "net_idr" SET DATA TYPE bigint;;--> statement-breakpoint
+ALTER TABLE "wallets" ADD CONSTRAINT "wallets_available_nonneg_chk" CHECK ("available_idr" >= 0);--> statement-breakpoint
+ALTER TABLE "wallets" ADD CONSTRAINT "wallets_pending_nonneg_chk" CHECK ("pending_idr" >= 0);--> statement-breakpoint
+ALTER TABLE "wallets" ADD CONSTRAINT "wallets_lifetime_earned_nonneg_chk" CHECK ("lifetime_earned_idr" >= 0);--> statement-breakpoint
+ALTER TABLE "wallets" ADD CONSTRAINT "wallets_lifetime_withdrawn_nonneg_chk" CHECK ("lifetime_withdrawn_idr" >= 0);--> statement-breakpoint
+ALTER TABLE "orders" ADD CONSTRAINT "orders_total_positive_chk" CHECK ("total_idr" > 0);--> statement-breakpoint
+ALTER TABLE "orders" ADD CONSTRAINT "orders_unit_price_positive_chk" CHECK ("unit_price_idr" > 0);--> statement-breakpoint
+ALTER TABLE "orders" ADD CONSTRAINT "orders_quantity_positive_chk" CHECK ("quantity" > 0);--> statement-breakpoint
+ALTER TABLE "products" ADD CONSTRAINT "products_price_positive_chk" CHECK ("price_idr" > 0);--> statement-breakpoint
+ALTER TABLE "withdraw_requests" ADD CONSTRAINT "withdraw_amount_positive_chk" CHECK ("amount_idr" > 0);--> statement-breakpoint
+ALTER TABLE "withdraw_requests" ADD CONSTRAINT "withdraw_fee_nonneg_chk" CHECK ("fee_idr" >= 0);--> statement-breakpoint
+ALTER TABLE "withdraw_requests" ADD CONSTRAINT "withdraw_net_positive_chk" CHECK ("net_idr" > 0);--> statement-breakpoint
+ALTER TABLE "withdraw_requests" ADD CONSTRAINT "withdraw_fee_net_sum_chk" CHECK ("fee_idr" + "net_idr" = "amount_idr");

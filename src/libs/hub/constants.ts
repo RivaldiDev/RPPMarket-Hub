@@ -49,6 +49,12 @@ export function isValidStoreSlug(slug: string): boolean {
   return true;
 }
 
+/**
+ * Hard cap on a single order total (integer IDR). Keeps totals far below
+ * both Duitku's practical limits and Number.MAX_SAFE_INTEGER.
+ */
+export const MAX_ORDER_TOTAL_IDR = 1_000_000_000;
+
 /** Platform withdraw fee in basis points. 500 = 5%. */
 export const DEFAULT_WITHDRAW_FEE_BPS = 500;
 

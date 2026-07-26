@@ -4,6 +4,7 @@ import { buttonVariants } from '@/components/ui/buttonVariants';
 import { TitleBar } from '@/features/dashboard/TitleBar';
 import {
   adminMarkWithdrawPaidAction,
+  adminRejectWithdrawAction,
   listPendingWithdrawsAdmin,
 } from '@/features/wallet/withdraw-actions';
 import { isPlatformAdmin, requireUserId } from '@/libs/hub/auth';
@@ -102,6 +103,18 @@ export default async function AdminWithdrawalsPage(props: {
                             `)}
                           >
                             {t('mark_paid')}
+                          </button>
+                        </form>
+                        <form action={adminRejectWithdrawAction}>
+                          <input type="hidden" name="withdrawId" value={w.id} />
+                          <button
+                            type="submit"
+                            className={cn(
+                              buttonVariants({ size: 'sm', variant: 'outline' }),
+                              'rpp-press',
+                            )}
+                          >
+                            {t('reject')}
                           </button>
                         </form>
                       </div>

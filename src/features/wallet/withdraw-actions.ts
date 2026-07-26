@@ -1,18 +1,26 @@
 'use server';
 
-import { and, desc, eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { getStoreByOwnerUserId } from '@/features/stores/queries';
-import { requestWithdraw } from '@/features/wallet/ledger';
+import {
+  markWithdrawPaid,
+  rejectWithdraw,
+  requestWithdraw,
+} from '@/features/wallet/ledger';
 import { db } from '@/libs/DB';
 import { Env } from '@/libs/Env';
 import { isPlatformAdmin, requireUserId } from '@/libs/hub/auth';
-import { wallets, withdrawRequests } from '@/models/Schema';
+import { withdrawRequests } from '@/models/Schema';
 
 const withdrawSchema = z.object({
-  amountIdr: z.coerce.number().int().min(1),
+  amountIdr: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(Number.MAX_SAFE_INTEGER),
   bankName: z.string().trim().min(2).max(80),
   bankAccountNumber: z
     .string()
@@ -22,6 +30,8 @@ const withdrawSchema = z.object({
     .regex(/^\d+$/, 'bank_account_digits'),
   bankAccountName: z.string().trim().min(2).max(80),
 });
+
+const withdrawIdSchema = z.string().uuid();
 
 export async function getWithdrawLimits() {
   return {
@@ -44,67 +54,45 @@ export async function listPendingWithdrawsAdmin() {
     .limit(100);
 }
 
-/**
- * Admin: mark withdraw as paid after manual bank transfer.
- */
-export async function adminMarkWithdrawPaidAction(formData: FormData) {
+async function requireAdminAndWithdrawId(formData: FormData): Promise<{
+  userId: string;
+  withdrawId: string;
+}> {
   const userId = await requireUserId();
   if (!isPlatformAdmin(userId)) {
     redirect('/dashboard?error=forbidden');
   }
 
-  const withdrawId = String(formData.get('withdrawId') || '');
-  if (!/^[0-9a-f-]{36}$/i.test(withdrawId)) {
+  const parsed = withdrawIdSchema.safeParse(formData.get('withdrawId'));
+  if (!parsed.success) {
     redirect('/dashboard/admin/withdrawals?error=invalid_id');
   }
 
+  return { userId, withdrawId: parsed.data };
+}
+
+/** Admin: mark withdraw as paid after manual bank transfer. */
+export async function adminMarkWithdrawPaidAction(formData: FormData) {
+  const { userId, withdrawId } = await requireAdminAndWithdrawId(formData);
+
   try {
-    await db.transaction(async (tx) => {
-      const [req] = await tx
-        .select()
-        .from(withdrawRequests)
-        .where(eq(withdrawRequests.id, withdrawId))
-        .limit(1);
+    await markWithdrawPaid(withdrawId, userId);
+  } catch {
+    redirect('/dashboard/admin/withdrawals?error=update_failed');
+  }
 
-      if (!req || req.status !== 'pending') {
-        throw new Error('not_pending');
-      }
+  revalidatePath('/dashboard/admin/withdrawals');
+  revalidatePath('/dashboard/wallet');
+  redirect('/dashboard/admin/withdrawals?ok=1');
+}
 
-      const updated = await tx
-        .update(withdrawRequests)
-        .set({
-          status: 'paid',
-          processedAt: new Date(),
-          adminNote: `Marked paid by ${userId}`,
-        })
-        .where(
-          and(
-            eq(withdrawRequests.id, withdrawId),
-            eq(withdrawRequests.status, 'pending'),
-          ),
-        )
-        .returning();
+/** Admin: reject a pending withdraw and release the hold back to available. */
+export async function adminRejectWithdrawAction(formData: FormData) {
+  const { userId, withdrawId } = await requireAdminAndWithdrawId(formData);
+  const note = String(formData.get('note') || '');
 
-      if (!updated[0]) {
-        throw new Error('not_pending');
-      }
-
-      const [wallet] = await tx
-        .select()
-        .from(wallets)
-        .where(eq(wallets.storeId, req.storeId))
-        .limit(1);
-
-      if (wallet) {
-        await tx
-          .update(wallets)
-          .set({
-            pendingIdr: Math.max(0, wallet.pendingIdr - req.amountIdr),
-            lifetimeWithdrawnIdr: wallet.lifetimeWithdrawnIdr + req.amountIdr,
-          })
-          .where(eq(wallets.id, wallet.id));
-      }
-    });
+  try {
+    await rejectWithdraw(withdrawId, userId, note);
   } catch {
     redirect('/dashboard/admin/withdrawals?error=update_failed');
   }
@@ -119,6 +107,9 @@ export async function requestWithdrawAction(formData: FormData) {
   const store = await getStoreByOwnerUserId(userId);
   if (!store) {
     redirect('/dashboard/wallet?error=store_required');
+  }
+  if (store.status === 'suspended') {
+    redirect('/dashboard/wallet?error=store_suspended');
   }
 
   const parsed = withdrawSchema.safeParse({
@@ -146,7 +137,10 @@ export async function requestWithdrawAction(formData: FormData) {
       ...parsed.data,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'withdraw_failed';
+    const message
+      = error instanceof Error && /^[\w.-]+$/.test(error.message)
+        ? error.message
+        : 'withdraw_failed';
     redirect(`/dashboard/wallet?error=${encodeURIComponent(message)}`);
   }
 

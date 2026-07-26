@@ -10,7 +10,18 @@ import {
 import { storeFormSchema } from '@/features/stores/validators';
 import { db } from '@/libs/DB';
 import { requireUserId } from '@/libs/hub/auth';
+import { revalidateLocalizedPath } from '@/libs/hub/revalidate';
 import { stores, wallets } from '@/models/Schema';
+
+/** True for Postgres unique-constraint violations (concurrent slug race). */
+function isUniqueViolation(error: unknown): boolean {
+  return (
+    typeof error === 'object'
+    && error !== null
+    && 'code' in error
+    && (error as { code?: string }).code === '23505'
+  );
+}
 
 function formString(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -47,54 +58,57 @@ export async function upsertStoreAction(formData: FormData): Promise<void> {
     redirect('/dashboard/store?error=slug_taken');
   }
 
-  if (existingOwned) {
-    await db
-      .update(stores)
-      .set({
-        name: data.name,
-        slug: data.slug,
-        description: data.description || null,
-        status: data.status,
-        logoUrl: data.logoUrl || null,
-      })
-      .where(eq(stores.id, existingOwned.id));
+  try {
+    if (existingOwned) {
+      await db
+        .update(stores)
+        .set({
+          name: data.name,
+          slug: data.slug,
+          description: data.description || null,
+          status: data.status,
+          logoUrl: data.logoUrl || null,
+        })
+        .where(eq(stores.id, existingOwned.id));
+    } else {
+      const [created] = await db
+        .insert(stores)
+        .values({
+          ownerUserId: userId,
+          name: data.name,
+          slug: data.slug,
+          description: data.description || null,
+          status: data.status,
+          logoUrl: data.logoUrl || null,
+        })
+        .returning();
 
-    revalidatePath('/dashboard/store');
-    revalidatePath('/dashboard/products');
-    revalidatePath('/dashboard');
-    revalidatePath(`/${data.slug}`);
-    if (existingOwned.slug !== data.slug) {
-      revalidatePath(`/${existingOwned.slug}`);
+      if (!created) {
+        redirect('/dashboard/store?error=create_failed');
+      }
+
+      await db.insert(wallets).values({
+        storeId: created.id,
+        availableIdr: 0,
+        pendingIdr: 0,
+        lifetimeEarnedIdr: 0,
+        lifetimeWithdrawnIdr: 0,
+      }).onConflictDoNothing();
     }
-  } else {
-    const [created] = await db
-      .insert(stores)
-      .values({
-        ownerUserId: userId,
-        name: data.name,
-        slug: data.slug,
-        description: data.description || null,
-        status: data.status,
-        logoUrl: data.logoUrl || null,
-      })
-      .returning();
-
-    if (!created) {
-      redirect('/dashboard/store?error=create_failed');
+  } catch (error) {
+    // Concurrent submit lost the check-then-write race on a unique index.
+    if (isUniqueViolation(error)) {
+      redirect('/dashboard/store?error=slug_taken');
     }
+    throw error;
+  }
 
-    await db.insert(wallets).values({
-      storeId: created.id,
-      availableIdr: 0,
-      pendingIdr: 0,
-      lifetimeEarnedIdr: 0,
-      lifetimeWithdrawnIdr: 0,
-    });
-
-    revalidatePath('/dashboard/store');
-    revalidatePath('/dashboard/products');
-    revalidatePath('/dashboard');
-    revalidatePath(`/${data.slug}`);
+  revalidatePath('/dashboard/store');
+  revalidatePath('/dashboard/products');
+  revalidatePath('/dashboard');
+  revalidateLocalizedPath(`/${data.slug}`);
+  if (existingOwned && existingOwned.slug !== data.slug) {
+    revalidateLocalizedPath(`/${existingOwned.slug}`);
   }
 
   redirect('/dashboard/store?ok=1');

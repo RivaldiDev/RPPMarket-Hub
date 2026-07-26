@@ -1,4 +1,5 @@
 import {
+  bigint,
   integer,
   jsonb,
   pgEnum,
@@ -9,6 +10,9 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
+
+/** IDR money column: int8 in Postgres, plain JS number in app code (safe ≤ 2^53). */
+const idr = (name: string) => bigint(name, { mode: 'number' });
 
 /**
  * RPP Market Hub domain schema
@@ -39,6 +43,7 @@ export const orderStatusEnum = pgEnum('order_status', [
 export const ledgerTypeEnum = pgEnum('ledger_type', [
   'order_credit',
   'withdraw_hold',
+  'withdraw_release',
   'withdraw_fee',
   'withdraw_payout',
   'adjust',
@@ -96,7 +101,7 @@ export const products = pgTable(
     slug: text('slug').notNull(),
     title: text('title').notNull(),
     description: text('description'),
-    priceIdr: integer('price_idr').notNull(),
+    priceIdr: idr('price_idr').notNull(),
     currency: text('currency').notNull().default('IDR'),
     imageUrl: text('image_url'),
     status: productStatusEnum('status').notNull().default('draft'),
@@ -124,8 +129,8 @@ export const orders = pgTable(
     buyerName: text('buyer_name'),
     buyerPhone: text('buyer_phone'),
     quantity: integer('quantity').notNull().default(1),
-    unitPriceIdr: integer('unit_price_idr').notNull(),
-    totalIdr: integer('total_idr').notNull(),
+    unitPriceIdr: idr('unit_price_idr').notNull(),
+    totalIdr: idr('total_idr').notNull(),
     status: orderStatusEnum('status').notNull().default('pending_payment'),
     merchantOrderId: text('merchant_order_id').notNull(),
     duitkuReference: text('duitku_reference'),
@@ -160,10 +165,10 @@ export const wallets = pgTable(
     storeId: uuid('store_id')
       .notNull()
       .references(() => stores.id, { onDelete: 'cascade' }),
-    availableIdr: integer('available_idr').notNull().default(0),
-    pendingIdr: integer('pending_idr').notNull().default(0),
-    lifetimeEarnedIdr: integer('lifetime_earned_idr').notNull().default(0),
-    lifetimeWithdrawnIdr: integer('lifetime_withdrawn_idr').notNull().default(0),
+    availableIdr: idr('available_idr').notNull().default(0),
+    pendingIdr: idr('pending_idr').notNull().default(0),
+    lifetimeEarnedIdr: idr('lifetime_earned_idr').notNull().default(0),
+    lifetimeWithdrawnIdr: idr('lifetime_withdrawn_idr').notNull().default(0),
     updatedAt: timestamp('updated_at', { mode: 'date' })
       .defaultNow()
       .$onUpdate(() => new Date())
@@ -181,8 +186,8 @@ export const ledgerEntries = pgTable(
       .notNull()
       .references(() => stores.id, { onDelete: 'cascade' }),
     type: ledgerTypeEnum('type').notNull(),
-    amountIdr: integer('amount_idr').notNull(),
-    balanceAfterIdr: integer('balance_after_idr').notNull(),
+    amountIdr: idr('amount_idr').notNull(),
+    balanceAfterIdr: idr('balance_after_idr').notNull(),
     refType: text('ref_type'),
     refId: text('ref_id'),
     note: text('note'),
@@ -205,9 +210,9 @@ export const withdrawRequests = pgTable('withdraw_requests', {
   storeId: uuid('store_id')
     .notNull()
     .references(() => stores.id, { onDelete: 'cascade' }),
-  amountIdr: integer('amount_idr').notNull(),
-  feeIdr: integer('fee_idr').notNull(),
-  netIdr: integer('net_idr').notNull(),
+  amountIdr: idr('amount_idr').notNull(),
+  feeIdr: idr('fee_idr').notNull(),
+  netIdr: idr('net_idr').notNull(),
   status: withdrawStatusEnum('status').notNull().default('pending'),
   bankName: text('bank_name'),
   bankAccountNumber: text('bank_account_number'),

@@ -9,6 +9,7 @@ import { getStoreBySlug } from '@/features/stores/queries';
 import { db } from '@/libs/DB';
 import { createInquiry, isDuitkuConfigured } from '@/libs/duitku/client';
 import { Env } from '@/libs/Env';
+import { MAX_ORDER_TOTAL_IDR } from '@/libs/hub/constants';
 import { logger } from '@/libs/Logger';
 import { orders, paymentEvents } from '@/models/Schema';
 import {
@@ -61,7 +62,11 @@ async function createCheckoutAndPay(
     const { buyerName, buyerEmail, buyerPhone, quantity } = parsed.data;
     const unitPriceIdr = product.priceIdr;
     const totalIdr = unitPriceIdr * quantity;
-    if (!Number.isInteger(totalIdr) || totalIdr <= 0) {
+    if (
+      !Number.isInteger(totalIdr)
+      || totalIdr <= 0
+      || totalIdr > MAX_ORDER_TOTAL_IDR
+    ) {
       return { ok: false, error: 'invalid_amount' };
     }
 
@@ -191,10 +196,11 @@ async function createCheckoutAndPay(
       return { ok: false, error: 'inquiry_failed' };
     }
   } catch (error) {
-    return {
-      ok: false,
-      error: error instanceof Error ? error.message : 'checkout_failed',
-    };
+    // Never surface raw driver/DB error text to the public checkout page.
+    logger.error(
+      `Checkout failed: ${error instanceof Error ? error.message : 'unknown'}`,
+    );
+    return { ok: false, error: 'checkout_failed' };
   }
 }
 
