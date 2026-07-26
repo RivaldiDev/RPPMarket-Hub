@@ -9,9 +9,9 @@ export const FeatureCard = (props: {
   <article className={cn('rpp-card rpp-reveal p-6', props.className)}>
     <div
       className="
-        flex size-12 items-center justify-center rounded-xl bg-linear-to-br
-        from-primary to-[oklch(0.5_0.12_200)] text-primary-foreground shadow-sm
-        [&_svg]:size-6
+        flex size-11 items-center justify-center rounded-lg border
+        border-primary/15 bg-primary/10 text-primary
+        [&_svg]:size-5
       "
       aria-hidden="true"
     >

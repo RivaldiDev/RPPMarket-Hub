@@ -78,7 +78,6 @@ export default async function PaymentReturnPage(props: ReturnPageProps) {
 
   return (
     <div className="rpp-shell min-h-screen">
-      <div className="rpp-mesh" aria-hidden="true" />
       {isPending && <AutoRefresh intervalMs={5000} />}
       <main className="mx-auto max-w-lg px-4 py-16">
         <div className="rpp-card p-8 text-center">

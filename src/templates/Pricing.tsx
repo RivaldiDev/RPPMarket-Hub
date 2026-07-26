@@ -1,7 +1,5 @@
 import { CheckIcon } from '@radix-ui/react-icons';
 import { useTranslations } from 'next-intl';
-import { Reveal } from '@/components/motion/Reveal';
-import { RevealGroup } from '@/components/motion/RevealGroup';
 import { buttonVariants } from '@/components/ui/buttonVariants';
 import { Section } from '@/features/landing/Section';
 import { Link } from '@/libs/I18nNavigation';
@@ -26,19 +24,12 @@ export const Pricing = () => {
       title={t('section_title')}
       description={t('section_description')}
     >
-      <RevealGroup className="
+      <div className="
         mx-auto grid max-w-4xl gap-5
         md:grid-cols-[1.1fr_0.9fr]
       "
       >
-        <Reveal as="article" className="rpp-card relative overflow-hidden p-8">
-          <div
-            className="
-              pointer-events-none absolute -top-16 -right-16 size-40
-              rounded-full bg-primary/15 blur-2xl
-            "
-            aria-hidden="true"
-          />
+        <article className="rpp-card relative overflow-hidden p-8">
           <div className="
             text-sm font-semibold tracking-wide text-primary uppercase
           "
@@ -80,12 +71,9 @@ export const Pricing = () => {
           >
             {t('button_text')}
           </Link>
-        </Reveal>
+        </article>
 
-        <Reveal
-          as="div"
-          className="rpp-card flex flex-col justify-between bg-muted/50 p-8"
-        >
+        <div className="rpp-card flex flex-col justify-between bg-muted/50 p-8">
           <div>
             <h3 className="text-lg font-semibold">{t('note_title')}</h3>
             <p className="mt-2 text-sm/relaxed text-muted-foreground">
@@ -114,8 +102,8 @@ export const Pricing = () => {
               <span className="text-lg font-bold tabular-nums">Rp 95.000</span>
             </div>
           </div>
-        </Reveal>
-      </RevealGroup>
+        </div>
+      </div>
     </Section>
   );
 };

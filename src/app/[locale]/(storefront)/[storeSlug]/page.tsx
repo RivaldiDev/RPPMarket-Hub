@@ -49,7 +49,6 @@ export default async function StorefrontPage(props: StorefrontPageProps) {
 
   return (
     <div className="rpp-shell min-h-screen">
-      <div className="rpp-mesh" aria-hidden="true" />
 
       <header className="border-b border-border/70 bg-card/70 backdrop-blur-md">
         <div className="

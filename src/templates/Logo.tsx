@@ -13,9 +13,8 @@ export const Logo = (props: {
   >
     <span
       className="
-        relative flex size-8 items-center justify-center rounded-xl
-        bg-linear-to-br from-primary to-[oklch(0.5_0.12_200)]
-        text-primary-foreground shadow-sm
+        relative flex size-8 items-center justify-center rounded-lg bg-primary
+        text-primary-foreground
       "
       aria-hidden="true"
     >

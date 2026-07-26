@@ -15,15 +15,7 @@ const StorePreview = () => {
       lg:max-w-none
     "
     >
-      <div
-        className="
-          rpp-float absolute -inset-6 -z-10 rounded-4xl bg-linear-to-br
-          from-primary/20 via-transparent to-[oklch(0.6_0.1_220/0.2)] blur-2xl
-        "
-        aria-hidden="true"
-      />
-
-      <div className="rpp-card overflow-hidden p-0 shadow-xl">
+      <div className="rpp-card overflow-hidden p-0 shadow-lg">
         <div className="
           flex items-center gap-2 border-b border-border/80 bg-muted/40 px-4
           py-3
@@ -58,11 +50,7 @@ const StorePreview = () => {
                 key={i}
                 className="rounded-xl border border-border/80 bg-surface p-3"
               >
-                <div className="
-                  mb-3 aspect-4/3 rounded-lg bg-linear-to-br from-muted
-                  to-accent/40
-                "
-                />
+                <div className="mb-3 aspect-4/3 rounded-lg bg-muted" />
                 <div className="h-2.5 w-4/5 rounded-full bg-muted-foreground/15" />
                 <div className="mt-2 h-2 w-1/2 rounded-full bg-primary/25" />
               </div>
@@ -70,8 +58,7 @@ const StorePreview = () => {
           </div>
 
           <div className="
-            rpp-shimmer rounded-xl border border-primary/15 bg-primary/5 px-4
-            py-3 text-sm
+            rounded-xl border border-primary/15 bg-primary/5 px-4 py-3 text-sm
           "
           >
             <div className="font-medium text-foreground">{t('checkout_title')}</div>
@@ -109,7 +96,7 @@ export const Hero = () => {
         )}
         title={t.rich('title', {
           important: chunks => (
-            <span className="rpp-gradient-text">{chunks}</span>
+            <span className="text-primary italic">{chunks}</span>
           ),
         })}
         description={t('description')}
@@ -138,8 +125,7 @@ export const Hero = () => {
       />
 
       <dl className="
-        rpp-hero-enter rpp-hero-enter-delay-4 mx-auto mt-14 grid max-w-4xl
-        grid-cols-2 gap-4
+        mx-auto mt-14 grid max-w-4xl grid-cols-2 gap-4
         sm:grid-cols-4
       "
       >
@@ -147,8 +133,7 @@ export const Hero = () => {
           <div
             key={key}
             className="
-              rounded-2xl border border-border/70 bg-card/70 p-4 text-center
-              backdrop-blur-sm
+              rounded-xl border border-border/70 bg-card p-4 text-center
             "
           >
             <dt className="text-xs text-muted-foreground">{t(`${key}_label`)}</dt>

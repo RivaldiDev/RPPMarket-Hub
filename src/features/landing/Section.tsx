@@ -30,7 +30,7 @@ export const Section = (props: {
 
         {props.title && (
           <h2 className="
-            mt-2 text-3xl font-bold tracking-tight text-balance
+            mt-2 font-display text-3xl font-semibold tracking-tight text-balance
             sm:text-4xl
           "
           >

@@ -68,7 +68,6 @@ export default async function ProductCheckoutPage(props: ProductPageProps) {
 
   return (
     <div className="rpp-shell min-h-screen">
-      <div className="rpp-mesh" aria-hidden="true" />
       <main className="
         mx-auto grid max-w-5xl gap-8 px-4 py-10
         sm:px-6

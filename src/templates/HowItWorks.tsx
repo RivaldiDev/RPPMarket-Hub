@@ -1,6 +1,4 @@
 import { useTranslations } from 'next-intl';
-import { Reveal } from '@/components/motion/Reveal';
-import { RevealGroup } from '@/components/motion/RevealGroup';
 import { Section } from '@/features/landing/Section';
 
 export const HowItWorks = () => {
@@ -16,14 +14,14 @@ export const HowItWorks = () => {
       title={t('section_title')}
       description={t('section_description')}
     >
-      <RevealGroup className="
+      <div className="
         grid gap-4
         md:grid-cols-2
         xl:grid-cols-4
       "
       >
         {steps.map((step, index) => (
-          <Reveal key={step} as="article" className="rpp-card relative p-6">
+          <article key={step} className="rpp-card relative p-6">
             <div className="mb-4 flex items-center justify-between">
               <span
                 className="
@@ -36,8 +34,7 @@ export const HowItWorks = () => {
               {index < steps.length - 1 && (
                 <span
                   className="
-                    hidden h-px flex-1 bg-linear-to-r from-primary/30
-                    to-transparent
+                    hidden h-px flex-1 bg-border
                     xl:ml-3 xl:block
                   "
                   aria-hidden="true"
@@ -50,9 +47,9 @@ export const HowItWorks = () => {
             <p className="mt-2 text-sm/relaxed text-muted-foreground">
               {t(`${step}_description`)}
             </p>
-          </Reveal>
+          </article>
         ))}
-      </RevealGroup>
+      </div>
     </Section>
   );
 };

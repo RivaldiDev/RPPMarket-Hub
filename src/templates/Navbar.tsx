@@ -10,14 +10,10 @@ export const Navbar = () => {
   const t = useTranslations('Navbar');
 
   return (
-    <header className="
-      sticky top-0 z-50 px-3 pt-3
-      sm:px-4
-    "
-    >
+    <header className="sticky top-0 z-50 border-b border-border bg-background">
       <div className="
-        rpp-glass mx-auto max-w-6xl rounded-2xl px-4 py-3
-        sm:px-5
+        mx-auto max-w-6xl px-4 py-3
+        sm:px-6
       "
       >
         <CenteredMenu

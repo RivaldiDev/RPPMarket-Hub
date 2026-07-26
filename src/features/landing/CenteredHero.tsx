@@ -16,7 +16,7 @@ export const CenteredHero = (props: {
     "
     >
       <div className="
-        rpp-hero-enter flex justify-center
+        flex justify-center
         lg:justify-start
       "
       >
@@ -25,10 +25,9 @@ export const CenteredHero = (props: {
 
       <h1
         className="
-          rpp-hero-enter rpp-hero-enter-delay-1 mt-5 text-4xl font-bold
-          tracking-tight text-balance
+          mt-5 font-display text-4xl font-semibold tracking-tight text-balance
           sm:text-5xl
-          lg:text-[3.25rem] lg:leading-[1.08]
+          lg:text-[3.4rem] lg:leading-[1.1]
         "
       >
         {props.title}
@@ -36,8 +35,7 @@ export const CenteredHero = (props: {
 
       <p
         className="
-          rpp-hero-enter rpp-hero-enter-delay-2 mx-auto mt-5 max-w-xl text-lg
-          text-pretty text-muted-foreground
+          mx-auto mt-5 max-w-xl text-lg text-pretty text-muted-foreground
           lg:mx-0
         "
       >
@@ -46,8 +44,7 @@ export const CenteredHero = (props: {
 
       <div
         className="
-          rpp-hero-enter rpp-hero-enter-delay-3 mt-8 flex flex-wrap items-center
-          justify-center gap-3
+          mt-8 flex flex-wrap items-center justify-center gap-3
           lg:justify-start
         "
       >
@@ -56,7 +53,7 @@ export const CenteredHero = (props: {
     </div>
 
     {props.preview && (
-      <div className="rpp-hero-enter rpp-hero-enter-delay-4 relative">
+      <div className="relative">
         {props.preview}
       </div>
     )}

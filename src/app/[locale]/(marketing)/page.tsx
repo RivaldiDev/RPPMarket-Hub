@@ -40,14 +40,12 @@ export async function generateMetadata(props: IndexProps): Promise<Metadata> {
 export default async function Index(props: IndexProps) {
   const { locale } = await props.params;
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: 'Index' });
 
   return (
     <div className="rpp-shell min-h-screen">
-      <div className="rpp-mesh" aria-hidden="true" />
-      <div className="rpp-grid" aria-hidden="true" />
-
       <a href="#main-content" className="rpp-skip-link">
-        Skip to content
+        {t('skip_to_content')}
       </a>
 
       <Navbar />

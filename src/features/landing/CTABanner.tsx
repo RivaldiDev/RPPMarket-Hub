@@ -5,24 +5,14 @@ export const CTABanner = (props: {
 }) => (
   <div
     className="
-      relative overflow-hidden rounded-2xl border border-primary/15
-      bg-linear-to-br from-primary via-[oklch(0.45_0.12_175)]
-      to-[oklch(0.4_0.1_220)] px-6 py-12 text-center shadow-lg
+      relative overflow-hidden rounded-2xl bg-primary px-6 py-12 text-center
       sm:px-10
     "
   >
-    <div
-      className="pointer-events-none absolute inset-0 opacity-40"
-      style={{
-        background:
-          'radial-gradient(circle at 20% 20%, white 0%, transparent 40%), radial-gradient(circle at 80% 80%, oklch(0.85 0.1 200 / 0.4) 0%, transparent 45%)',
-      }}
-      aria-hidden="true"
-    />
-
     <div className="relative">
       <h2 className="
-        text-3xl font-bold tracking-tight text-balance text-primary-foreground
+        font-display text-3xl font-semibold tracking-tight text-balance
+        text-primary-foreground
         sm:text-4xl
       "
       >
