@@ -1,0 +1,2 @@
+CREATE UNIQUE INDEX "ledger_store_type_ref_uidx" ON "ledger_entries" USING btree ("store_id","type","ref_type","ref_id");--> statement-breakpoint
+CREATE UNIQUE INDEX "stores_owner_user_id_uidx" ON "stores" USING btree ("owner_user_id");

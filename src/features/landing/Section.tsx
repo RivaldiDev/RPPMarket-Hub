@@ -6,14 +6,22 @@ export const Section = (props: {
   subtitle?: string;
   description?: string;
   className?: string;
+  id?: string;
+  bare?: boolean;
 }) => (
-  <div className={cn('@container px-3 py-16', props.className)}>
+  <section
+    id={props.id}
+    className={cn(`
+      @container px-4 py-20
+      sm:px-6
+      lg:px-8
+    `, props.className)}
+  >
     {(props.title || props.subtitle || props.description) && (
-      <div className="mx-auto mb-12 max-w-3xl text-center">
+      <div className="mx-auto mb-14 max-w-3xl text-center">
         {props.subtitle && (
           <div className="
-            bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500
-            bg-clip-text text-sm font-bold text-transparent
+            text-sm font-semibold tracking-wide text-primary uppercase
           "
           >
             {props.subtitle}
@@ -21,17 +29,27 @@ export const Section = (props: {
         )}
 
         {props.title && (
-          <div className="mt-1 text-3xl font-bold">{props.title}</div>
+          <h2 className="
+            mt-2 text-3xl font-bold tracking-tight text-balance
+            sm:text-4xl
+          "
+          >
+            {props.title}
+          </h2>
         )}
 
         {props.description && (
-          <div className="mt-2 text-lg text-muted-foreground">
+          <p className="
+            mt-3 text-base text-pretty text-muted-foreground
+            sm:text-lg
+          "
+          >
             {props.description}
-          </div>
+          </p>
         )}
       </div>
     )}
 
-    <div className="mx-auto max-w-5xl">{props.children}</div>
-  </div>
+    <div className={cn(!props.bare && 'mx-auto max-w-6xl')}>{props.children}</div>
+  </section>
 );

@@ -14,57 +14,45 @@ export const CenteredFooter = (props: {
     <div className="flex flex-col items-center text-center">
       {props.logo}
 
-      <ul className="
-        mt-4 flex gap-x-8 text-lg
-        max-sm:flex-col
-        [&_a:hover]:opacity-70
-      "
+      <ul
+        className="
+          mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2
+          text-sm font-medium
+          max-sm:flex-col
+        "
       >
         {props.children}
       </ul>
 
-      <ul className="
-        mt-4 flex flex-row gap-x-5 text-primary
-        [&_svg]:size-5 [&_svg]:fill-current
-        [&_svg:hover]:opacity-60
-      "
+      <ul
+        className="
+          [&_a]:rpp-press
+          mt-5 flex flex-row gap-x-4 text-muted-foreground
+          [&_a]:transition-opacity
+          hover:[&_a]:opacity-70
+          [&_svg]:size-5 [&_svg]:fill-current
+        "
       >
         {props.iconList}
       </ul>
 
-      <div className="
-        mt-6 flex w-full items-center justify-between gap-y-2 border-t pt-3
-        text-sm text-muted-foreground
-        max-md:flex-col
-      "
+      <div
+        className="
+          mt-8 flex w-full items-center justify-between gap-y-3 border-t
+          border-border/80 pt-4 text-sm text-muted-foreground
+          max-md:flex-col
+        "
       >
         <div>
-          {t.rich('footer_text', {
+          {t('footer_text', {
             year: new Date().getFullYear(),
-            name: AppConfig.name,
-            author: () => (
-              <a
-                className="
-                  text-blue-500
-                  hover:text-blue-600
-                "
-                href="https://nextjs-boilerplate.com"
-              >
-                Next.js Boilerplate
-              </a>
-            ),
+            name: props.name || AppConfig.name,
           })}
-          {/*
-           * PLEASE READ THIS SECTION
-           * I'm an indie maker with limited resources and funds, I'll really appreciate if you could have a link to my website.
-           * The link doesn't need to appear on every pages, one link on one page is enough.
-           * For example, in the `About` page. Thank you for your support, it'll mean a lot to me.
-           */}
         </div>
 
         <ul className="
+          [&_a]:rpp-link
           flex gap-x-4 font-medium
-          [&_a:hover]:opacity-60
         "
         >
           {props.legalLinks}

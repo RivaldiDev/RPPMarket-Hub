@@ -1,115 +1,250 @@
 {
   "Index": {
-    "meta_title": "SaaS Template - The perfect SaaS template to build and scale your business with ease.",
-    "meta_description": "A free and open-source landing page template for your SaaS business, built with React, TypeScript, Shadcn UI, and Tailwind CSS."
+    "meta_title": "RPP Market — Digital store hub for resellers",
+    "meta_description": "Create your own digital storefront, share a custom link, accept payments with Duitku, and withdraw earnings with a transparent 5% platform fee."
   },
   "Navbar": {
     "sign_in": "Sign in",
-    "sign_up": "Sign up",
-    "product": "Product",
+    "sign_up": "Start free",
+    "product": "Features",
+    "how_it_works": "How it works",
     "pricing": "Pricing",
-    "docs": "Docs",
-    "blog": "Blog",
-    "about": "About"
+    "faq": "FAQ"
   },
   "LocaleSwitcher": {
     "button_label": "Change language"
   },
   "Hero": {
-    "follow_twitter": "Follow @Ixartz on Twitter",
-    "title": "The perfect <important>SaaS template</important> to build and scale your business with ease.",
-    "description": "A free and open-source landing page template for your SaaS business, built with React, TypeScript, Shadcn UI, and Tailwind CSS.",
-    "primary_button": "Get Next.js SaaS Starter Kit",
-    "secondary_button": "Star on GitHub"
+    "badge": "Reseller store hub · Powered by Duitku",
+    "title": "Build your <important>digital storefront</important>. Share one link. Get paid.",
+    "description": "RPP Market is a hub for resellers and agents. Open a store, list products, checkout with local payments, and withdraw balance with a clear 5% platform fee.",
+    "primary_button": "Create your store",
+    "secondary_button": "See how it works",
+    "stat1_label": "Store link",
+    "stat1_value": "/your-store",
+    "stat2_label": "Payments",
+    "stat2_value": "Duitku",
+    "stat3_label": "Platform fee",
+    "stat3_value": "5% withdraw",
+    "stat4_label": "Languages",
+    "stat4_value": "ID · EN"
+  },
+  "HeroPreview": {
+    "store_name": "Toko Digital Anda",
+    "store_tagline": "Shared storefront · not listed on the hub",
+    "badge": "Live store",
+    "checkout_title": "Checkout ready",
+    "checkout_hint": "VA · QRIS · e-wallet via Duitku"
   },
   "Features": {
     "section_subtitle": "Features",
-    "section_title": "Unlock the Full Potential of the SaaS Template",
-    "section_description": "A free and open-source landing page template for your SaaS business, built with React, TypeScript, Shadcn UI, and Tailwind CSS.",
-    "feature1_title": "Node.js",
-    "feature2_title": "React",
-    "feature3_title": "Tailwind CSS",
-    "feature4_title": "TypeScript",
-    "feature5_title": "Shadcn UI",
-    "feature6_title": "ESLint",
-    "feature_description": "A free and open-source landing page template for your SaaS business, built with React, TypeScript, Shadcn UI, and Tailwind CSS."
+    "section_title": "Everything resellers need to sell digital goods",
+    "section_description": "A focused toolkit for storefronts, payments, and payouts — without turning the hub into a public marketplace directory.",
+    "feature1_title": "Your own store",
+    "feature1_description": "Register a store with a custom slug and brand it. Buyers only reach it through the link you share.",
+    "feature2_title": "Shareable store links",
+    "feature2_description": "Links like /toko-satu stay private to your channels. No public store browser on the landing page.",
+    "feature3_title": "Local payment rails",
+    "feature3_description": "Accept payments through Duitku — virtual accounts, QRIS, and e-wallets popular in Indonesia.",
+    "feature4_title": "Reseller wallet",
+    "feature4_description": "Paid orders credit your wallet ledger so sales and withdrawals stay auditable.",
+    "feature5_title": "Transparent 5% fee",
+    "feature5_description": "Revenue model is simple: no monthly lock-in on the hub. Platform takes 5% only when you withdraw.",
+    "feature6_title": "ID + EN ready",
+    "feature6_description": "Interface available in Bahasa Indonesia and English with automatic language preference detection."
+  },
+  "HowItWorks": {
+    "section_subtitle": "How it works",
+    "section_title": "From signup to first sale",
+    "section_description": "Four clear steps. No public marketplace clutter — just your store and your customers.",
+    "step1_title": "Create an account",
+    "step1_description": "Sign up as a reseller and claim your store profile in the dashboard.",
+    "step2_title": "List products",
+    "step2_description": "Add digital listings with price, description, and status. MVP focuses on listing + checkout.",
+    "step3_title": "Share your link",
+    "step3_description": "Send rppmarket.com/your-store to buyers. The hub landing never exposes a store directory.",
+    "step4_title": "Get paid & withdraw",
+    "step4_description": "Buyers pay via Duitku. Balance lands in your wallet. Withdraw with a 5% platform fee."
   },
   "Pricing": {
     "section_subtitle": "Pricing",
-    "section_title": "Unlock the Full Potential of the SaaS Template",
-    "section_description": "A free and open-source landing page template for your SaaS business, built with React, TypeScript, Shadcn UI, and Tailwind CSS.",
-    "button_text": "Get started"
-  },
-  "PricingPlans": {
-    "free_plan_name": "Free",
-    "premium_plan_name": "Premium",
-    "enterprise_plan_name": "Enterprise"
-  },
-  "PricingCard": {
-    "free_plan_description": "For individuals",
-    "premium_plan_description": "For small teams",
-    "enterprise_plan_description": "For industry leaders",
-    "plan_price": "${price}",
-    "plan_interval_month": "/ month",
-    "plan_interval_year": "/ year"
-  },
-  "PricingFeatures": {
-    "feature_team_member": "Up to {number} team members",
-    "feature_website": "Up to {number} websites",
-    "feature_storage": "{number} GB of storage",
-    "feature_transfer": "{number} TB of transfer",
-    "feature_email_support": "Email support"
-  },
-  "SponsorLogos": {
-    "sponsored_by": "Sponsored by",
-    "clerk_logo": "Clerk logo",
-    "sentry_logo": "Sentry logo",
-    "crowdin_logo": "Crowdin logo",
-    "arcjet_logo": "Arcjet logo",
-    "coderabbit_logo": "CodeRabbit logo",
-    "nextjs_boilerplate_logo": "Next.js SaaS Boilerplate logo"
+    "section_title": "Earn first. Fee only on withdraw.",
+    "section_description": "RPP Market is not a monthly SaaS plan wall. The platform earns when resellers cash out.",
+    "model_badge": "Platform model",
+    "model_title": "Pay as you withdraw",
+    "model_description": "Start free. Build your store, sell products, then withdraw earnings when you are ready.",
+    "fee_caption": "platform fee per withdraw",
+    "button_text": "Open reseller account",
+    "feature_store": "Custom storefront slug",
+    "feature_products": "Product listing & pricing",
+    "feature_checkout": "Buyer checkout flow",
+    "feature_duitku": "Duitku payment gateway",
+    "feature_wallet": "Wallet ledger & history",
+    "feature_fee": "5% fee only on withdraw",
+    "note_title": "Why this model?",
+    "note_body": "Resellers keep momentum without paying subscription rent. The hub aligns with your success — fee is charged when money leaves the platform.",
+    "example_gross": "Withdraw request",
+    "example_fee": "Platform fee (5%)",
+    "example_net": "You receive"
   },
   "FAQ": {
-    "question": "Lorem ipsum dolor sit amet, consectetur adipiscing elit?",
-    "answer": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam aliquam enim dui, id consequat turpis ullamcorper ac. Mauris id quam dolor. Nullam eu egestas turpis. Proin risus elit, sollicitudin in mi a, accumsan euismod turpis. In euismod mi sed diam tristique hendrerit."
+    "section_subtitle": "FAQ",
+    "section_title": "Questions resellers usually ask",
+    "section_description": "Straight answers about stores, discovery, payments, and fees.",
+    "q1_question": "Can buyers browse all stores from the homepage?",
+    "q1_answer": "No. RPP Market is a hub, not a public marketplace directory. Each reseller shares their own store link such as /toko-satu.",
+    "q2_question": "What can I sell in the MVP?",
+    "q2_answer": "Digital listings with checkout. Delivery can be handled manually by the reseller. Automated delivery is planned later.",
+    "q3_question": "Which payment gateway is used?",
+    "q3_answer": "Duitku. Buyers can pay through supported Indonesian methods like VA, QRIS, and e-wallets depending on your Duitku project setup.",
+    "q4_question": "When does RPP Market take a fee?",
+    "q4_answer": "On withdraw only. The platform fee is a flat 5% of the withdrawn amount. Example: withdraw Rp 100.000 → fee Rp 5.000 → net Rp 95.000.",
+    "q5_question": "Is the interface multi-language?",
+    "q5_answer": "Yes. Bahasa Indonesia and English are supported, with automatic preference detection from browser language and location signals when available.",
+    "q6_question": "Do I need a paid subscription to start?",
+    "q6_answer": "No monthly subscription is required for the core hub model. Create a store, sell, then withdraw with the platform fee."
   },
   "CTA": {
-    "title": "You are ready?",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "button_text": "Get Next.js SaaS Starter Kit"
+    "title": "Ready to open your storefront?",
+    "description": "Claim your slug, list products, and start sharing a checkout-ready link with your buyers.",
+    "button_text": "Start on RPP Market"
   },
   "Footer": {
-    "product": "Product",
-    "docs": "Docs",
-    "blog": "Blog",
-    "community": "Community",
-    "company": "Company",
-    "terms_of_service": "Terms Of Service",
+    "product": "Features",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "start": "Get started",
+    "terms_of_service": "Terms of Service",
     "privacy_policy": "Privacy Policy",
-    "footer_text": "© {year} {name}. Made with <author></author>."
+    "footer_text": "© {year} {name}. Digital store hub for resellers."
   },
   "SignIn": {
-    "meta_title": "Sign in",
-    "meta_description": "Seamlessly sign in to your account with our user-friendly login process."
+    "meta_title": "Sign in · RPP Market",
+    "meta_description": "Sign in to manage your RPP Market store, products, and wallet."
   },
   "SignUp": {
-    "meta_title": "Sign up",
-    "meta_description": "Effortlessly create an account through our intuitive sign-up process."
+    "meta_title": "Sign up · RPP Market",
+    "meta_description": "Create a reseller account and launch your digital storefront on RPP Market."
   },
   "DashboardLayout": {
-    "meta_title": "SaaS Template Dashboard",
-    "meta_description": "A free and open-source landing page template for your SaaS business, built with Next.js, TypeScript, Shadcn UI, and Tailwind CSS.",
+    "meta_title": "RPP Market Dashboard",
+    "meta_description": "Manage your store, products, orders, and wallet on RPP Market.",
     "home": "Home",
-    "members": "Members",
-    "settings": "Settings"
+    "store": "Store",
+    "products": "Products",
+    "orders": "Orders",
+    "wallet": "Wallet"
   },
   "DashboardIndexPage": {
-    "title_bar": "Dashboard",
-    "title_bar_description": "Welcome to your dashboard",
-    "message_state_title": "Let's get started",
-    "message_state_description": "Customize this page by editing the file at <code>dashboard/page.tsx</code>.",
-    "message_state_alternative": "Need advanced features? Next.js 16 & React 19, Multi-tenancy & Teams, Roles & Permissions, Shadcn UI,\nEnd-to-End Typesafety with oRPC, Stripe Payment, Light / Dark mode. Try <url></url>.",
-    "max_message": "Or, need a Self-hosted auth stack (Better Auth)? Try <url></url>."
+    "title_bar": "Seller dashboard",
+    "title_bar_description": "Multi-agent hub control center for your digital storefront",
+    "message_state_title": "Build your agent storefront",
+    "message_state_description": "Claim a unique slug, list products, and share a private checkout link. Buyers never browse a public store directory on the hub.",
+    "message_state_alternative": "Next: wire Duitku checkout, wallet credits, and 5% withdraw fee.",
+    "max_message": "Platform model: fee on withdraw only · Payments: Duitku",
+    "cta_store": "Set up store",
+    "card_store_title": "Store profile",
+    "card_store_description": "Name, slug, and storefront status",
+    "card_products_title": "Products",
+    "card_products_description": "Digital listings and pricing",
+    "card_orders_title": "Orders",
+    "card_orders_description": "Buyer payments and fulfillment",
+    "card_wallet_title": "Wallet",
+    "card_wallet_description": "Balance, withdraw, platform fee"
+  },
+  "SellerStorePage": {
+    "title_bar": "Store",
+    "title_bar_description": "Your agent storefront identity",
+    "field_name": "Store name",
+    "field_slug": "Unique slug",
+    "field_slug_help": "Lowercase letters, numbers, hyphens only. Not reserved paths.",
+    "field_description": "Description",
+    "field_status": "Status",
+    "field_logo": "Logo URL (optional)",
+    "create": "Create store",
+    "save": "Save store",
+    "saved": "Store saved.",
+    "public_link": "Public storefront:",
+    "not_public_until_active": "Not public until status is active. Path:"
+  },
+  "SellerProductsPage": {
+    "title_bar": "Products",
+    "title_bar_description": "List digital goods for your storefront",
+    "need_store": "Create a store first before adding products.",
+    "go_store": "Set up store",
+    "create_title": "Add product",
+    "field_title": "Title",
+    "field_slug": "Slug",
+    "field_price": "Price (IDR)",
+    "field_image": "Image URL (optional)",
+    "field_description": "Description",
+    "create": "Create product",
+    "save": "Save product",
+    "saved": "Products updated.",
+    "empty": "No products yet.",
+    "view": "View",
+    "archive": "Archive"
+  },
+  "SellerOrdersPage": {
+    "title_bar": "Orders",
+    "title_bar_description": "Buyer payments and fulfillment",
+    "need_store": "Create a store first.",
+    "go_store": "Set up store",
+    "empty": "No orders yet.",
+    "col_order": "Order",
+    "col_buyer": "Buyer",
+    "col_amount": "Amount",
+    "col_status": "Status"
+  },
+  "SellerWalletPage": {
+    "title_bar": "Wallet",
+    "title_bar_description": "Earnings and withdraw requests",
+    "need_store": "Create a store first.",
+    "go_store": "Set up store",
+    "available_label": "Available",
+    "pending_label": "Pending",
+    "fee_label": "Platform fee",
+    "fee_example": "Example: Rp {gross} -> fee Rp {fee} -> net Rp {net}",
+    "withdraw_title": "Request withdraw",
+    "amount": "Amount (IDR)",
+    "bank_name": "Bank name",
+    "bank_account": "Account number",
+    "bank_holder": "Account holder name",
+    "withdraw_submit": "Request withdraw",
+    "withdraw_success": "Withdraw request submitted.",
+    "min_withdraw": "Minimum withdraw: Rp {amount}",
+    "withdraw_history": "Withdraw history",
+    "ledger_history": "Ledger",
+    "empty_withdraws": "No withdraw requests yet.",
+    "empty_ledger": "No ledger entries yet."
+  },
+  "AdminWithdrawalsPage": {
+    "title_bar": "Admin withdrawals",
+    "title_bar_description": "Pending seller withdraw requests (manual review)",
+    "pending_title": "Pending requests",
+    "empty": "No pending withdrawals.",
+    "net": "Net",
+    "fee": "Fee",
+    "store_id": "Store",
+    "manual_note": "Mark paid only after you completed the bank transfer. Auto-disburse is deferred.",
+    "mark_paid": "Mark paid",
+    "marked_paid": "Withdraw marked as paid."
+  },
+  "Storefront": {
+    "meta_title": "{store} · RPP Market",
+    "meta_description": "Digital storefront {store} on RPP Market hub.",
+    "not_found_title": "Store not found · RPP Market",
+    "powered_by": "RPP Market storefront",
+    "empty_products": "No products available yet.",
+    "no_description": "No description",
+    "buy": "Buy",
+    "checkout_title": "Checkout",
+    "checkout_hint": "Pay via Duitku (or mock mode in local dev).",
+    "buyer_name": "Full name",
+    "buyer_email": "Email",
+    "buyer_phone": "Phone (optional)",
+    "quantity": "Quantity",
+    "pay_now": "Pay now"
   },
   "UserProfilePage": {
     "title_bar": "User Profile",
@@ -118,5 +253,18 @@
   "OrganizationProfilePage": {
     "title_bar": "Organization Management",
     "title_bar_description": "Manage your organization"
+  },
+  "PaymentsReturn": {
+    "title": "Payment status",
+    "description": "We confirm payment from our database, not only from the redirect.",
+    "missing_order": "Missing merchant order id.",
+    "order_not_found": "Order not found.",
+    "order_id": "Order",
+    "amount": "Amount",
+    "status": "Status",
+    "buyer": "Buyer",
+    "mock_confirm": "Mock confirm payment",
+    "mock_hint": "Only available when Duitku keys are not configured and mock mode is allowed.",
+    "back_hub": "Back to hub"
   }
 }

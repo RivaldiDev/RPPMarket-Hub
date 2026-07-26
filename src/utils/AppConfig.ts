@@ -1,42 +1,41 @@
 import type { LocalizationResource } from '@clerk/shared/types';
 import type { LocalePrefixMode } from 'next-intl/routing';
 import type { AppLocale } from '@/types/I18n';
-import { enUS, frFR } from '@clerk/localizations';
+import { enUS, idID } from '@clerk/localizations';
 
 /** Locale prefix strategy for next-intl routing. */
 const localePrefix: LocalePrefixMode = 'as-needed';
 const locales = [
   {
+    id: 'id',
+    name: 'Bahasa Indonesia',
+  },
+  {
     id: 'en',
     name: 'English',
   },
-  {
-    id: 'fr',
-    name: 'Français',
-  },
 ] satisfies AppLocale[];
 
-// FIXME: Customize this configuration for your product
 /** Centralized application configuration */
 export const AppConfig = {
-  name: 'SaaS Template',
+  name: 'RPP Market',
   i18n: {
     locales,
-    defaultLocale: 'en',
+    defaultLocale: 'id',
     localePrefix,
   },
   email: {
-    support: 'contact@nextjs-boilerplate.com',
+    support: 'support@rppmarket.com',
   },
 } as const;
 
 const supportedLocales: Record<string, LocalizationResource> = {
+  id: idID,
   en: enUS,
-  fr: frFR,
 };
 
 export const ClerkLocalizations = {
-  defaultLocale: enUS,
+  defaultLocale: idID,
   supportedLocales,
 };
 

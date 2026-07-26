@@ -45,6 +45,13 @@ export default antfu(
         entryPoint: 'src/styles/global.css',
       },
     },
+    rules: {
+      'better-tailwindcss/no-unknown-classes': ['error', {
+        // rpp-* are custom design-system classes defined in global.css;
+        // --* are CSS custom properties passed via style objects
+        ignore: ['rpp-[\\w-]+$', '^--[\\w-]+$'],
+      }],
+    },
   },
   // --- E2E Testing Rules ---
   {

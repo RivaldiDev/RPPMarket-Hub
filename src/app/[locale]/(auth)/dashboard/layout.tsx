@@ -31,7 +31,10 @@ export default async function DashboardLayout(props: DashboardLayoutProps) {
 
   return (
     <>
-      <div className="shadow-md">
+      <div className="
+        border-b border-border/80 bg-card/80 shadow-sm backdrop-blur-sm
+      "
+      >
         <div className="
           mx-auto flex max-w-7xl items-center justify-between px-3 py-4
         "
@@ -43,19 +46,27 @@ export default async function DashboardLayout(props: DashboardLayoutProps) {
                 label: t('home'),
               },
               {
-                href: '/dashboard/organization-profile/organization-members',
-                label: t('members'),
+                href: '/dashboard/store',
+                label: t('store'),
               },
               {
-                href: '/dashboard/organization-profile',
-                label: t('settings'),
+                href: '/dashboard/products',
+                label: t('products'),
+              },
+              {
+                href: '/dashboard/orders',
+                label: t('orders'),
+              },
+              {
+                href: '/dashboard/wallet',
+                label: t('wallet'),
               },
             ]}
           />
         </div>
       </div>
 
-      <div className="min-h-[calc(100vh-72px)] bg-muted">
+      <div className="min-h-[calc(100vh-72px)] bg-muted/50">
         <div className="mx-auto max-w-7xl px-3 pt-6 pb-16">
           {props.children}
         </div>

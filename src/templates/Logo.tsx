@@ -1,23 +1,39 @@
 import { AppConfig } from '@/utils/AppConfig';
+import { cn } from '@/utils/Helpers';
 
 export const Logo = (props: {
   isTextHidden?: boolean;
+  className?: string;
 }) => (
-  <div className="flex items-center text-xl font-semibold">
-    <svg
-      className="mr-1 size-8 stroke-current stroke-2"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+  <div
+    className={cn(
+      'flex items-center gap-2 text-base font-semibold tracking-tight',
+      props.className,
+    )}
+  >
+    <span
+      className="
+        relative flex size-8 items-center justify-center rounded-xl
+        bg-linear-to-br from-primary to-[oklch(0.5_0.12_200)]
+        text-primary-foreground shadow-sm
+      "
+      aria-hidden="true"
     >
-      <path d="M0 0h24v24H0z" stroke="none" />
-      <rect x="3" y="12" width="6" height="8" rx="1" />
-      <rect x="9" y="8" width="6" height="12" rx="1" />
-      <rect x="15" y="4" width="6" height="16" rx="1" />
-      <path d="M4 20h14" />
-    </svg>
-    {!props.isTextHidden && AppConfig.name}
+      <svg
+        className="size-4"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M4 7h16" />
+        <path d="M4 12h10" />
+        <path d="M4 17h7" />
+        <circle cx="18" cy="16" r="3" />
+      </svg>
+    </span>
+    {!props.isTextHidden && <span>{AppConfig.name}</span>}
   </div>
 );

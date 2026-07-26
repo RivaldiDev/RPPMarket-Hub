@@ -1,6 +1,6 @@
 {
-  "name": "saas-boilerplate",
-  "author": "Ixartz (https://github.com/ixartz)",
+  "name": "rppmarket-hub",
+  "author": "RPP Market",
   "engines": {
     "node": ">=24"
   },
@@ -17,7 +17,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "check:types": "tsc --noEmit --pretty",
-    "check:deps": "knip",
+    "check:deps": "cross-env NODE_OPTIONS=--max-old-space-size=4096 knip",
     "check:i18n": "i18n-check -l src/locales -s en -u src -f next-intl",
     "commit": "commit",
     "test": "vitest run",
