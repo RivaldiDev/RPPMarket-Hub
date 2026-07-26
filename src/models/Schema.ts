@@ -104,6 +104,8 @@ export const products = pgTable(
     priceIdr: idr('price_idr').notNull(),
     currency: text('currency').notNull().default('IDR'),
     imageUrl: text('image_url'),
+    /** Revealed to the buyer only after payment: download link, license key, or instructions. */
+    deliveryContent: text('delivery_content'),
     status: productStatusEnum('status').notNull().default('draft'),
     createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { mode: 'date' })

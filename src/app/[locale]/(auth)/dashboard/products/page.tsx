@@ -128,6 +128,15 @@ export default async function ProductsPage(props: {
             md:col-span-2
           "
         />
+        <div className="md:col-span-2">
+          <textarea
+            name="deliveryContent"
+            rows={3}
+            placeholder={t('field_delivery')}
+            className="w-full rounded-lg border border-border px-3 py-2 text-sm"
+          />
+          <p className="mt-1 text-xs text-muted-foreground">{t('field_delivery_hint')}</p>
+        </div>
         <button type="submit" className={cn(buttonVariants(), 'rpp-press w-fit')}>
           {t('create')}
         </button>
@@ -245,6 +254,18 @@ export default async function ProductsPage(props: {
                   md:col-span-2
                 "
               />
+              <div className="md:col-span-2">
+                <textarea
+                  name="deliveryContent"
+                  rows={2}
+                  defaultValue={item.deliveryContent ?? ''}
+                  placeholder={t('field_delivery')}
+                  className="
+                    w-full rounded-lg border border-border px-3 py-2 text-sm
+                  "
+                />
+                <p className="mt-1 text-xs text-muted-foreground">{t('field_delivery_hint')}</p>
+              </div>
               <button
                 type="submit"
                 className={cn(buttonVariants({ size: 'sm' }), `rpp-press w-fit`)}

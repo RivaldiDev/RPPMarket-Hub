@@ -183,7 +183,9 @@
     "saved": "Products updated.",
     "empty": "No products yet.",
     "view": "View",
-    "archive": "Archive"
+    "archive": "Archive",
+    "field_delivery": "Delivery content (download link, license key, or instructions)",
+    "field_delivery_hint": "Shown to the buyer only after successful payment. Leave empty if you deliver manually."
   },
   "SellerOrdersPage": {
     "title_bar": "Orders",
@@ -194,7 +196,11 @@
     "col_order": "Order",
     "col_buyer": "Buyer",
     "col_amount": "Amount",
-    "col_status": "Status"
+    "col_status": "Status",
+    "col_actions": "Actions",
+    "mark_fulfilled": "Mark fulfilled",
+    "marked_fulfilled": "Order marked as fulfilled.",
+    "action_failed": "Action failed. Try again."
   },
   "SellerWalletPage": {
     "title_bar": "Wallet",
@@ -245,7 +251,12 @@
     "buyer_email": "Email",
     "buyer_phone": "Phone (optional)",
     "quantity": "Quantity",
-    "pay_now": "Pay now"
+    "pay_now": "Pay now",
+    "error_buyer_email_invalid": "Invalid email. Please check it.",
+    "error_quantity_max": "Maximum 99 per order.",
+    "error_invalid_amount": "Invalid order total.",
+    "error_inquiry_failed": "Payment gateway issue. Please try again shortly.",
+    "error_generic": "Checkout failed. Try again."
   },
   "UserProfilePage": {
     "title_bar": "User Profile",
@@ -266,6 +277,19 @@
     "buyer": "Buyer",
     "mock_confirm": "Mock confirm payment",
     "mock_hint": "Only available when Duitku keys are not configured and mock mode is allowed.",
-    "back_hub": "Back to hub"
+    "back_hub": "Back to hub",
+    "product": "Product",
+    "status_paid": "Paid",
+    "status_pending": "Awaiting payment",
+    "status_failed": "Failed / expired",
+    "pending_refresh_hint": "This page refreshes automatically every few seconds once you pay.",
+    "delivery_title": "Your product",
+    "delivery_manual_hint": "The seller will deliver this product manually to your email. Contact the seller if you have not received it.",
+    "delivery_keep_page": "Keep this page — it is only reachable via your order ID.",
+    "error_missing_order": "Order ID missing.",
+    "error_order_not_found": "Order not found.",
+    "error_duitku_configured": "Mock confirmation is unavailable while the gateway is active.",
+    "error_mock_disabled": "Mock confirmation is disabled.",
+    "error_generic": "Something went wrong. Try again."
   }
 }

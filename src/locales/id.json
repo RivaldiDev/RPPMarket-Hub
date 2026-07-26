@@ -183,7 +183,9 @@
     "saved": "Produk diperbarui.",
     "empty": "Belum ada produk.",
     "view": "Lihat",
-    "archive": "Arsipkan"
+    "archive": "Arsipkan",
+    "field_delivery": "Konten delivery (link download, kode lisensi, atau instruksi)",
+    "field_delivery_hint": "Hanya ditampilkan ke pembeli setelah pembayaran berhasil. Kosongkan jika kamu kirim manual."
   },
   "SellerOrdersPage": {
     "title_bar": "Order",
@@ -194,7 +196,11 @@
     "col_order": "Order",
     "col_buyer": "Pembeli",
     "col_amount": "Nominal",
-    "col_status": "Status"
+    "col_status": "Status",
+    "col_actions": "Aksi",
+    "mark_fulfilled": "Tandai terkirim",
+    "marked_fulfilled": "Pesanan ditandai terkirim.",
+    "action_failed": "Aksi gagal. Coba lagi."
   },
   "SellerWalletPage": {
     "title_bar": "Wallet",
@@ -245,7 +251,12 @@
     "buyer_email": "Email",
     "buyer_phone": "Telepon (opsional)",
     "quantity": "Jumlah",
-    "pay_now": "Bayar sekarang"
+    "pay_now": "Bayar sekarang",
+    "error_buyer_email_invalid": "Email tidak valid. Periksa lagi.",
+    "error_quantity_max": "Jumlah maksimal 99 per pesanan.",
+    "error_invalid_amount": "Total pesanan tidak valid.",
+    "error_inquiry_failed": "Gateway pembayaran sedang bermasalah. Coba lagi sebentar.",
+    "error_generic": "Checkout gagal. Coba lagi."
   },
   "UserProfilePage": {
     "title_bar": "Profil Pengguna",
@@ -266,6 +277,19 @@
     "buyer": "Pembeli",
     "mock_confirm": "Mock konfirmasi bayar",
     "mock_hint": "Hanya tersedia jika key Duitku belum dikonfigurasi dan mode mock diizinkan.",
-    "back_hub": "Kembali ke hub"
+    "back_hub": "Kembali ke hub",
+    "product": "Produk",
+    "status_paid": "Lunas",
+    "status_pending": "Menunggu pembayaran",
+    "status_failed": "Gagal / kedaluwarsa",
+    "pending_refresh_hint": "Halaman ini diperbarui otomatis setiap beberapa detik setelah kamu membayar.",
+    "delivery_title": "Produk kamu",
+    "delivery_manual_hint": "Penjual akan mengirim produk ini secara manual ke email kamu. Hubungi penjual jika belum diterima.",
+    "delivery_keep_page": "Simpan halaman ini — link hanya bisa diakses lewat ID pesanan kamu.",
+    "error_missing_order": "ID pesanan tidak ditemukan.",
+    "error_order_not_found": "Pesanan tidak ditemukan.",
+    "error_duitku_configured": "Konfirmasi mock tidak tersedia saat gateway aktif.",
+    "error_mock_disabled": "Konfirmasi mock dinonaktifkan.",
+    "error_generic": "Terjadi kesalahan. Coba lagi."
   }
 }

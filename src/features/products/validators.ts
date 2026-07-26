@@ -23,5 +23,6 @@ export const productFormSchema = z.object({
     .refine(value => !value || isSafeHttpUrl(value), {
       message: 'invalid_image_url',
     }),
+  deliveryContent: z.string().trim().max(10_000).optional().or(z.literal('')),
   status: productStatusSchema.default('draft'),
 });

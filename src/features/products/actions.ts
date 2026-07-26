@@ -58,6 +58,7 @@ export async function createProductAction(formData: FormData): Promise<void> {
     description: formString(formData, 'description'),
     priceIdr: formString(formData, 'priceIdr'),
     imageUrl: formString(formData, 'imageUrl'),
+    deliveryContent: formString(formData, 'deliveryContent'),
     status: formString(formData, 'status') || 'draft',
   });
 
@@ -83,6 +84,7 @@ export async function createProductAction(formData: FormData): Promise<void> {
       description: data.description || null,
       priceIdr: data.priceIdr,
       imageUrl: data.imageUrl || null,
+      deliveryContent: data.deliveryContent || null,
       status: data.status,
     });
   } catch (error) {
@@ -115,6 +117,7 @@ export async function updateProductAction(formData: FormData): Promise<void> {
     description: formString(formData, 'description'),
     priceIdr: formString(formData, 'priceIdr'),
     imageUrl: formString(formData, 'imageUrl'),
+    deliveryContent: formString(formData, 'deliveryContent'),
     status: formString(formData, 'status') || existing.status,
   });
 
@@ -143,6 +146,7 @@ export async function updateProductAction(formData: FormData): Promise<void> {
         description: data.description || null,
         priceIdr: data.priceIdr,
         imageUrl: data.imageUrl || null,
+        deliveryContent: data.deliveryContent || null,
         status: data.status,
       })
       .where(and(eq(products.id, existing.id), eq(products.storeId, store.id)));

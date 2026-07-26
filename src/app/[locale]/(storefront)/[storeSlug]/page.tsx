@@ -57,19 +57,31 @@ export default async function StorefrontPage(props: StorefrontPageProps) {
           sm:px-6
         "
         >
-          <div>
-            <p className="
-              text-xs font-medium tracking-wide text-primary uppercase
-            "
-            >
-              {t('powered_by')}
-            </p>
-            <h1 className="text-lg font-semibold tracking-tight">{store.name}</h1>
-            {store.description && (
-              <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-                {store.description}
-              </p>
+          <div className="flex items-start gap-3">
+            {store.logoUrl && (
+              // eslint-disable-next-line next/no-img-element -- seller-hosted remote logo, domains unknown ahead of time
+              <img
+                src={store.logoUrl}
+                alt=""
+                className="
+                  size-12 shrink-0 rounded-xl border border-border object-cover
+                "
+              />
             )}
+            <div>
+              <p className="
+                text-xs font-medium tracking-wide text-primary uppercase
+              "
+              >
+                {t('powered_by')}
+              </p>
+              <h1 className="text-lg font-semibold tracking-tight">{store.name}</h1>
+              {store.description && (
+                <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+                  {store.description}
+                </p>
+              )}
+            </div>
           </div>
           <span className="
             rounded-full bg-primary/10 px-3 py-1 text-xs font-medium
@@ -107,11 +119,22 @@ export default async function StorefrontPage(props: StorefrontPageProps) {
                     key={product.id}
                     className="rpp-card flex flex-col p-5"
                   >
-                    <div className="
-                      mb-3 aspect-4/3 rounded-xl bg-linear-to-br from-muted
-                      to-accent/40
-                    "
-                    />
+                    {product.imageUrl
+                      ? (
+                          // eslint-disable-next-line next/no-img-element -- seller-hosted remote image, domains unknown ahead of time
+                          <img
+                            src={product.imageUrl}
+                            alt={product.title}
+                            loading="lazy"
+                            className="
+                              mb-3 aspect-4/3 w-full rounded-xl border
+                              border-border object-cover
+                            "
+                          />
+                        )
+                      : (
+                          <div className="mb-3 aspect-4/3 rounded-xl bg-muted" />
+                        )}
                     <h2 className="font-semibold tracking-tight">{product.title}</h2>
                     <p className="
                       mt-1 line-clamp-2 text-sm text-muted-foreground

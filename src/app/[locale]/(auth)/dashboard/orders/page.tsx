@@ -2,6 +2,7 @@ import { desc, eq } from 'drizzle-orm';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { buttonVariants } from '@/components/ui/buttonVariants';
 import { TitleBar } from '@/features/dashboard/TitleBar';
+import { markOrderFulfilledAction } from '@/features/orders/fulfill-action';
 import { getStoreByOwnerUserId } from '@/features/stores/queries';
 import { db } from '@/libs/DB';
 import { requireUserId } from '@/libs/hub/auth';
@@ -11,8 +12,10 @@ import { cn } from '@/utils/Helpers';
 
 export default async function OrdersPage(props: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ error?: string; ok?: string }>;
 }) {
   const { locale } = await props.params;
+  const { error, ok } = await props.searchParams;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'SellerOrdersPage' });
   const userId = await requireUserId();
@@ -47,6 +50,26 @@ export default async function OrdersPage(props: {
   return (
     <>
       <TitleBar title={t('title_bar')} description={t('title_bar_description')} />
+
+      {error && (
+        <div className="
+          mb-4 rounded-lg border border-destructive/30 bg-destructive/10 px-3
+          py-2 text-sm text-destructive
+        "
+        >
+          {t('action_failed')}
+        </div>
+      )}
+      {ok && (
+        <div className="
+          mb-4 rounded-lg border border-primary/20 bg-primary/10 px-3 py-2
+          text-sm text-primary
+        "
+        >
+          {t('marked_fulfilled')}
+        </div>
+      )}
+
       <div className="rpp-card overflow-x-auto p-0">
         <table className="min-w-full text-left text-sm">
           <thead className="border-b border-border bg-muted/40">
@@ -55,13 +78,16 @@ export default async function OrdersPage(props: {
               <th className="px-4 py-3 font-medium">{t('col_buyer')}</th>
               <th className="px-4 py-3 font-medium">{t('col_amount')}</th>
               <th className="px-4 py-3 font-medium">{t('col_status')}</th>
+              <th className="px-4 py-3 font-medium">
+                <span className="sr-only">{t('col_actions')}</span>
+              </th>
             </tr>
           </thead>
           <tbody>
             {rows.length === 0 && (
               <tr>
                 <td
-                  colSpan={4}
+                  colSpan={5}
                   className="px-4 py-8 text-center text-muted-foreground"
                 >
                   {t('empty')}
@@ -81,6 +107,22 @@ export default async function OrdersPage(props: {
                   {order.totalIdr.toLocaleString('id-ID')}
                 </td>
                 <td className="px-4 py-3 uppercase">{order.status}</td>
+                <td className="px-4 py-3">
+                  {order.status === 'paid' && (
+                    <form action={markOrderFulfilledAction}>
+                      <input type="hidden" name="orderId" value={order.id} />
+                      <button
+                        type="submit"
+                        className={cn(
+                          buttonVariants({ variant: 'outline', size: 'sm' }),
+                          'rpp-press',
+                        )}
+                      >
+                        {t('mark_fulfilled')}
+                      </button>
+                    </form>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>

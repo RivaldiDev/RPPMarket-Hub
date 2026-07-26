@@ -14,6 +14,14 @@ type ProductPageProps = {
   searchParams: Promise<{ error?: string }>;
 };
 
+/** Buyer-fixable error codes with dedicated messages; the rest map to generic. */
+const KNOWN_CHECKOUT_ERRORS = new Set([
+  'buyer_email_invalid',
+  'quantity_max',
+  'invalid_amount',
+  'inquiry_failed',
+]);
+
 export async function generateMetadata(props: ProductPageProps): Promise<Metadata> {
   const { locale, storeSlug, productSlug } = await props.params;
   const t = await getTranslations({ locale, namespace: 'Storefront' });
@@ -79,6 +87,17 @@ export default async function ProductCheckoutPage(props: ProductPageProps) {
             {' '}
             {store.name}
           </Link>
+          {product.imageUrl && (
+            // eslint-disable-next-line next/no-img-element -- seller-hosted remote image, domains unknown ahead of time
+            <img
+              src={product.imageUrl}
+              alt={product.title}
+              className="
+                mt-4 aspect-4/3 w-full rounded-xl border border-border
+                object-cover
+              "
+            />
+          )}
           <h1 className="mt-4 text-2xl font-bold tracking-tight">{product.title}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             {product.description || t('no_description')}
@@ -100,7 +119,11 @@ export default async function ProductCheckoutPage(props: ProductPageProps) {
               px-3 py-2 text-sm text-destructive
             "
             >
-              {error}
+              {t(
+                (KNOWN_CHECKOUT_ERRORS.has(error)
+                  ? `error_${error}`
+                  : 'error_generic') as never,
+              )}
             </div>
           )}
 
