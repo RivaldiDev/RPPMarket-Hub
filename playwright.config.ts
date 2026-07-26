@@ -1,4 +1,3 @@
-import type { ChromaticConfig } from '@chromatic-com/playwright';
 import { defineConfig, devices } from '@playwright/test';
 
 // Use process.env.PORT by default and fallback to port 3008
@@ -11,7 +10,7 @@ const baseURL = `http://localhost:${PORT}`;
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig<ChromaticConfig>({
+export default defineConfig({
   testDir: './tests',
   // Look for files with the .integ.js or .e2e.js extension
   testMatch: '*.@(integ|e2e).?(c|m)[jt]s?(x)',
@@ -56,19 +55,11 @@ export default defineConfig<ChromaticConfig>({
 
     // Record videos when retrying the failed test.
     video: process.env.CI ? 'retain-on-failure' : undefined,
-
-    // Disable automatic screenshots at test completion when using Chromatic test fixture.
-    disableAutoSnapshot: true,
   },
 
   projects: [
-    // `setup` and `teardown` are used to run code before and after all E2E tests.
-    // These functions can be used to configure Clerk for testing purposes. For example, bypassing bot detection.
-    // In the `setup` file, you can create an account in `Test mode`.
-    // For each test, an organization can be created within this account to ensure total isolation.
-    // After all tests are completed, the `teardown` file can delete the account and all associated organizations.
-    // You can find the `setup` and `teardown` files at: https://nextjs-boilerplate.com/pro-saas-starter-kit
-    // Or, need a Self-hosted auth stack (Better Auth)? Try Next.js Boilerplate Max: https://nextjs-boilerplate.com/nextjs-multi-tenant-saas-boilerplate
+    // `setup` and `teardown` run code before and after all E2E tests
+    // (e.g. configuring Clerk test mode or seeding data).
     { name: 'setup', testMatch: /.*\.setup\.ts/, teardown: 'teardown' },
     { name: 'teardown', testMatch: /.*\.teardown\.ts/ },
     {

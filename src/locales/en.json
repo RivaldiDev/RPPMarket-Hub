@@ -116,7 +116,8 @@
     "start": "Get started",
     "terms_of_service": "Terms of Service",
     "privacy_policy": "Privacy Policy",
-    "footer_text": "© {year} {name}. Digital store hub for resellers."
+    "footer_text": "© {year} {name}. Digital store hub for resellers.",
+    "contact": "Contact"
   },
   "SignIn": {
     "meta_title": "Sign in · RPP Market",
@@ -291,5 +292,44 @@
     "error_duitku_configured": "Mock confirmation is unavailable while the gateway is active.",
     "error_mock_disabled": "Mock confirmation is disabled.",
     "error_generic": "Something went wrong. Try again."
+  },
+  "TermsPage": {
+    "meta_title": "Terms of Service | RPP Market",
+    "meta_description": "Terms of service for using RPP Market.",
+    "back_home": "Back to home",
+    "title": "Terms of Service",
+    "updated": "Last updated: 27 July 2026",
+    "service_title": "The service",
+    "service_body": "RPP Market is a digital store hub for resellers and agents. Each seller gets one storefront with a shareable link. RPP Market is not a public marketplace directory: buyers arrive through links shared by the seller.",
+    "seller_title": "Seller responsibilities",
+    "seller_body": "Sellers are fully responsible for the legality, quality, and delivery of the digital products they sell, including the delivery content shown to buyers after payment. Products that violate Indonesian law or third-party rights are prohibited and may lead to store suspension.",
+    "buyer_title": "Buyers",
+    "buyer_body": "Buyers transact directly with the seller. Complaints, refunds, and warranties are resolved between buyer and seller. Keep your order status page — it contains the digital product you purchased.",
+    "fees_title": "Platform fees",
+    "fees_body": "There is no monthly fee. The platform charges a 5% fee on seller balance withdrawals. Minimum withdrawal is Rp 50,000. Fee rates may change with prior notice.",
+    "payments_title": "Payments",
+    "payments_body": "Payments are processed by Duitku (VA, QRIS, e-wallets). Paid order funds are credited to the seller’s store balance and can be withdrawn to a bank account through a manual withdrawal process.",
+    "liability_title": "Limitation of liability",
+    "liability_body": "The service is provided as is. RPP Market is not liable for indirect losses arising from use of the service, seller product content, or third-party outages (including the payment gateway).",
+    "changes_title": "Changes",
+    "changes_body": "We may update these terms from time to time. Continued use of the service after changes means you accept the new terms."
+  },
+  "PrivacyPage": {
+    "meta_title": "Privacy Policy | RPP Market",
+    "meta_description": "RPP Market privacy policy.",
+    "back_home": "Back to home",
+    "title": "Privacy Policy",
+    "updated": "Last updated: 27 July 2026",
+    "collected_title": "Data we collect",
+    "collected_body": "Seller accounts (name, email) are managed through Clerk. For orders we store the buyer’s name, email, optional phone number, and order details. For withdrawals we store the seller’s bank account details. We also log payment events from the gateway.",
+    "usage_title": "How we use data",
+    "usage_body": "Data is used to process orders and payments, credit seller balances, process withdrawals, prevent abuse, and meet legal obligations. We do not sell personal data.",
+    "third_parties_title": "Third parties",
+    "third_parties_body": "We use Clerk (authentication), Duitku (payments), and hosting providers to run the service. Each processes data under its own privacy policy.",
+    "retention_title": "Retention",
+    "retention_body": "Order data and financial records (ledger) are retained as long as needed for audits, reconciliation, and legal obligations. Account data is deleted when an account is closed, except financial records we are required to keep.",
+    "rights_title": "Your rights",
+    "rights_body": "You may request access to, correction of, or deletion of your personal data. Contact us via the email below.",
+    "contact": "Privacy questions:"
   }
 }

@@ -116,7 +116,8 @@
     "start": "Mulai",
     "terms_of_service": "Syarat Layanan",
     "privacy_policy": "Kebijakan Privasi",
-    "footer_text": "© {year} {name}. Hub toko digital untuk reseller."
+    "footer_text": "© {year} {name}. Hub toko digital untuk reseller.",
+    "contact": "Kontak"
   },
   "SignIn": {
     "meta_title": "Masuk · RPP Market",
@@ -291,5 +292,44 @@
     "error_duitku_configured": "Konfirmasi mock tidak tersedia saat gateway aktif.",
     "error_mock_disabled": "Konfirmasi mock dinonaktifkan.",
     "error_generic": "Terjadi kesalahan. Coba lagi."
+  },
+  "TermsPage": {
+    "meta_title": "Syarat & Ketentuan | RPP Market",
+    "meta_description": "Syarat dan ketentuan penggunaan RPP Market.",
+    "back_home": "Kembali ke beranda",
+    "title": "Syarat & Ketentuan",
+    "updated": "Terakhir diperbarui: 27 Juli 2026",
+    "service_title": "Layanan",
+    "service_body": "RPP Market adalah hub toko digital untuk reseller dan agen. Setiap penjual mendapat satu storefront dengan link yang bisa dibagikan. RPP Market bukan direktori marketplace publik: pembeli datang lewat link yang dibagikan penjual.",
+    "seller_title": "Kewajiban penjual",
+    "seller_body": "Penjual bertanggung jawab penuh atas legalitas, kualitas, dan pengiriman produk digital yang dijual, termasuk konten delivery yang ditampilkan ke pembeli setelah pembayaran. Produk yang melanggar hukum Indonesia atau hak pihak ketiga dilarang dan dapat menyebabkan penangguhan toko.",
+    "buyer_title": "Pembeli",
+    "buyer_body": "Pembeli bertransaksi langsung dengan penjual. Komplain, refund, dan garansi diselesaikan antara pembeli dan penjual. Simpan halaman status pesanan kamu — halaman itu memuat produk digital yang kamu beli.",
+    "fees_title": "Biaya platform",
+    "fees_body": "Tidak ada biaya bulanan. Platform memotong biaya 5% dari jumlah penarikan (withdraw) saldo penjual. Minimum penarikan Rp 50.000. Besaran biaya dapat berubah dengan pemberitahuan sebelumnya.",
+    "payments_title": "Pembayaran",
+    "payments_body": "Pembayaran diproses oleh Duitku (VA, QRIS, e-wallet). Dana pesanan yang lunas dikreditkan ke saldo toko penjual dan dapat ditarik ke rekening bank melalui proses penarikan manual.",
+    "liability_title": "Batasan tanggung jawab",
+    "liability_body": "Layanan disediakan sebagaimana adanya. RPP Market tidak bertanggung jawab atas kerugian tidak langsung akibat penggunaan layanan, konten produk penjual, atau gangguan pihak ketiga (termasuk gateway pembayaran).",
+    "changes_title": "Perubahan",
+    "changes_body": "Kami dapat memperbarui syarat ini dari waktu ke waktu. Penggunaan layanan setelah perubahan berarti kamu menyetujui syarat yang baru."
+  },
+  "PrivacyPage": {
+    "meta_title": "Kebijakan Privasi | RPP Market",
+    "meta_description": "Kebijakan privasi RPP Market.",
+    "back_home": "Kembali ke beranda",
+    "title": "Kebijakan Privasi",
+    "updated": "Terakhir diperbarui: 27 Juli 2026",
+    "collected_title": "Data yang kami kumpulkan",
+    "collected_body": "Akun penjual (nama, email) dikelola melalui Clerk. Untuk pesanan, kami menyimpan nama, email, dan nomor telepon opsional pembeli beserta detail pesanan. Untuk penarikan, kami menyimpan detail rekening bank penjual. Kami juga mencatat event pembayaran dari gateway.",
+    "usage_title": "Penggunaan data",
+    "usage_body": "Data digunakan untuk memproses pesanan dan pembayaran, mengkreditkan saldo penjual, memproses penarikan, mencegah penyalahgunaan, dan memenuhi kewajiban hukum. Kami tidak menjual data pribadi.",
+    "third_parties_title": "Pihak ketiga",
+    "third_parties_body": "Kami menggunakan Clerk (autentikasi), Duitku (pembayaran), dan penyedia hosting untuk menjalankan layanan. Masing-masing memproses data sesuai kebijakan privasinya sendiri.",
+    "retention_title": "Penyimpanan",
+    "retention_body": "Data pesanan dan catatan keuangan (ledger) disimpan selama diperlukan untuk audit, rekonsiliasi, dan kewajiban hukum. Data akun dihapus saat akun ditutup, kecuali catatan keuangan yang wajib disimpan.",
+    "rights_title": "Hak kamu",
+    "rights_body": "Kamu dapat meminta akses, koreksi, atau penghapusan data pribadimu. Hubungi kami melalui email di bawah ini.",
+    "contact": "Pertanyaan privasi:"
   }
 }

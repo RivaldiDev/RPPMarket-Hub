@@ -48,14 +48,25 @@ Do **not** continue legacy `RPPMarket` / `RPPMarket-Vercel` for this product.
 - `PLATFORM_MIN_WITHDRAW_IDR=50000`
 - `PLATFORM_ADMIN_USER_IDS` (optional)
 
+## Hardening (2026-07-27)
+- Wallet mutations are atomic SQL increments with guard predicates
+  (documented ledger invariant in `src/features/wallet/ledger.ts`)
+- Duitku signatures use classic v2 MD5 formulas (per official PHP SDK)
+- IDR columns are `bigint` with CHECK constraints (migrations 0003–0005)
+- Product delivery content revealed on paid return page; auto-refresh
+- Admin can reject withdraws (releases the pending hold)
+- Terms/Privacy pages at `/terms`, `/privacy`
+- Sitemap is hub-only (share-only storefronts are not enumerated)
+
 ## Verify
 - `npm run check:types`
 - `npm run check:i18n`
-- unit tests: hub constants, duitku signature, fee, helpers
+- `npm run check:deps`
+- `npx vitest run --project unit` (includes PGlite money-path tests)
 - `npm run build:next`
 
 ## Deferred
 - Auto disbursement (Duitku transfer)
-- Product delivery automation
+- Buyer/seller email notifications
 - Public store directory
 - Custom domains

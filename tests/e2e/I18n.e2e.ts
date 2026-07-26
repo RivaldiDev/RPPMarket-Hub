@@ -1,26 +1,32 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('I18n', () => {
-  test.describe('Language Switching', () => {
-    test('should switch language from English to French using dropdown and verify text on the homepage', async ({ page }) => {
+  test.describe('Language switching', () => {
+    test('should show the Indonesian homepage by default', async ({ page }) => {
       await page.goto('/');
 
-      await expect(page.getByText('The perfect SaaS template to build')).toBeVisible();
-
-      await page.getByRole('button', { name: 'Change language' }).click();
-      await page.getByText('Français').click();
-
-      await expect(page.getByText('Le parfait SaaS template pour construire')).toBeVisible();
+      await expect(
+        page.getByRole('heading', { level: 1 }),
+      ).toContainText('Bagikan satu link');
     });
 
-    test('should switch language from English to French using URL and verify text on the sign-in page', async ({ page }) => {
-      await page.goto('/sign-in');
+    test('should show the English homepage under /en', async ({ page }) => {
+      await page.goto('/en');
 
-      await expect(page.getByText('Email address')).toBeVisible();
+      await expect(
+        page.getByRole('heading', { level: 1 }),
+      ).toContainText('Share one link');
+    });
 
-      await page.goto('/fr/sign-in');
+    test('should switch language using the dropdown', async ({ page }) => {
+      await page.goto('/');
 
-      await expect(page.getByText('Adresse e-mail')).toBeVisible();
+      await page.getByRole('button', { name: 'Ganti bahasa' }).click();
+      await page.getByText('English').click();
+
+      await expect(
+        page.getByRole('heading', { level: 1 }),
+      ).toContainText('Share one link');
     });
   });
 });
